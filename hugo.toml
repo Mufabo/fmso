@@ -1,3 +1,17 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://mufabo.github.io/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Fatih macht sachen online'
+
+[params]
+  author = "Fatih Bostanci"
+  description = "A blog about my personal interests."
+
+  [[params.social]]
+    icon = "github"
+    name = "GitHub"
+    url = "https://github.com/mufabo"
+
+  [[params.social]]
+    icon = "linkedin"
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/in/m-fatih-bostanci-272338208/"
