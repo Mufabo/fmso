@@ -1,0 +1,8 @@
+baseURL = 'https://example.org/' #https://mufabo.github.io/fmso
+title = 'fatih macht sachen online'
+
+[params]
+  author = 'M. Fatih Bostanci'
+  description = 'Here you can find my musings on various topics'
+  avatar = 'D:\fatih\github.com\mufabo\fmso\1634299277238.jpeg'
+  favicon = 'D:\fatih\github.com\mufabo\fmso\1634299277238.jpeg'

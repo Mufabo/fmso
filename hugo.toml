@@ -1,8 +1,8 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://example.org/' #https://mufabo.github.io/fmso
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'fatih macht sachen online'
 theme = "hugo-theme-m10c"
 author = 'M. Fatih Bostanci'
 description = 'Here you can find my musings on various topics'
-avatar = './1634299277238.jpeg'
+avatar = 'D:\fatihgithub.com\mufabo\fmso\static\1634299277238.jpeg'
 favicon = 'D:\fatih\github.com\mufabo\fmso\static\1634299277238.jpeg'
