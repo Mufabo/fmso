@@ -1,0 +1,43 @@
+# ── Identity ─────────────────────────────────────────────────────────
+# baseURL must exactly match where the site is served from, or CSS and
+# links will break. This site lives at the custom domain below. To test
+# on Codeberg's subdomain first, switch it to your codeberg.page URL
+# (and adjust site:/server: in .forgejo/workflows/deploy.yaml).
+baseURL = 'https://fatih.machtsachen.online/'
+title = 'fatih.machtsachen.online'
+languageCode = 'en-us'
+capitalizeListTitles = false
+
+[params]
+  author = 'Fatih Bostanci'
+  # Used for meta description and the RSS feed.
+  description = 'Notes and essays from a small, quiet corner of the web.'
+  # Shown in the footer and on the about page.
+  linkedin = 'https://www.linkedin.com/in/m-fatih-bostanci-272338208/'
+  # The line shown at the top of the home page.
+  intro = 'Occasional writing on whatever currently has my attention.'
+
+[taxonomies]
+  tag = 'tags'
+
+[[menus.main]]
+  name = 'Posts'
+  pageRef = '/posts'
+  weight = 10
+
+[[menus.main]]
+  name = 'Tags'
+  pageRef = '/tags'
+  weight = 20
+
+[[menus.main]]
+  name = 'About'
+  pageRef = '/about'
+  weight = 30
+
+[markup]
+  [markup.highlight]
+    # Emit CSS classes instead of inline colors, so code blocks can
+    # follow light/dark mode (see assets/css/syntax.css).
+    noClasses = false
+

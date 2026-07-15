@@ -1,0 +1,12 @@
+<footer class="site-footer">
+  <p>&copy; {{ now.Year }} {{ site.Params.author }}
+    <span class="dot" aria-hidden="true">&middot;</span>
+    <a href="{{ "index.xml" | relURL }}">RSS</a>
+    {{- with site.Params.linkedin }}
+    <span class="dot" aria-hidden="true">&middot;</span>
+    <a href="{{ . }}" rel="me external">LinkedIn</a>
+    {{- end }}
+    <span class="dot" aria-hidden="true">&middot;</span>
+    <a href="https://gohugo.io/" rel="external">Built with Hugo</a>
+  </p>
+</footer>

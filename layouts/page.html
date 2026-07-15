@@ -1,0 +1,45 @@
+{{ define "main" }}
+<article class="post">
+  {{- with .Params.avatar }}
+  {{- with resources.Get . }}
+  {{- with .Fill "480x480 q90 Center" }}
+  <img class="avatar" src="{{ .RelPermalink }}" width="240" height="240"
+       alt="Portrait of {{ site.Params.author }}">
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  <header class="post-header">
+    <h1>{{ .Title }}</h1>
+    {{- if eq .Section "posts" }}
+    <p class="post-meta">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+      <span class="dot" aria-hidden="true">&middot;</span>
+      {{ .ReadingTime }} min read
+    </p>
+    {{- end }}
+  </header>
+
+  <div class="prose">
+    {{ .Content }}
+  </div>
+
+  {{- with .GetTerms "tags" }}
+  <footer class="post-tags">
+    {{- range . }}
+    <a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
+    {{- end }}
+  </footer>
+  {{- end }}
+
+  {{- if eq .Section "posts" }}
+  <nav class="post-nav" aria-label="More posts">
+    {{- with .NextInSection }}
+    <a class="nav-newer" href="{{ .RelPermalink }}"><span class="nav-label">Newer</span>{{ .Title }}</a>
+    {{- end }}
+    {{- with .PrevInSection }}
+    <a class="nav-older" href="{{ .RelPermalink }}"><span class="nav-label">Older</span>{{ .Title }}</a>
+    {{- end }}
+  </nav>
+  {{- end }}
+</article>
+{{ end }}

@@ -1,0 +1,7 @@
+{{ define "main" }}
+<section class="intro">
+  <p>{{ site.Params.intro }}</p>
+  {{ .Content }}
+</section>
+{{ partial "post-list.html" (where site.RegularPages "Section" "posts") }}
+{{ end }}
