@@ -3,8 +3,8 @@
 # links will break. This site lives at the custom domain below. To test
 # on Codeberg's subdomain first, switch it to your codeberg.page URL
 # (and adjust site:/server: in .forgejo/workflows/deploy.yaml).
-baseURL = 'https://fatih.machtsachen.online/'
-title = 'fatih.machtsachen.online'
+baseURL = 'https://fatih.macht.sachen.online/'
+title = 'fatih.macht.sachen.online'
 languageCode = 'en-us'
 capitalizeListTitles = false
 
@@ -29,6 +29,16 @@ capitalizeListTitles = false
   name = 'Tags'
   pageRef = '/tags'
   weight = 20
+
+[[menus.main]]
+  name = 'Open Books'
+  pageRef = '/open-books'
+  weight = 25
+
+[[menus.main]]
+  name = 'My Apps'
+  pageRef = '/my-apps'
+  weight = 27
 
 [[menus.main]]
   name = 'About'

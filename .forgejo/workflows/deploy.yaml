@@ -27,7 +27,7 @@ jobs:
           # described in the README (CNAME + _git-pages-forge-allowlist
           # TXT). To deploy to Codeberg's subdomain instead, set site:
           # to your codeberg.page URL and remove the server: line.
-          site: 'https://fatih.machtsachen.online/'
+          site: 'https://fatih.macht.sachen.online/'
           server: 'codeberg.page'
           token: ${{ forge.token }}
           source: public/
