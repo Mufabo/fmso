@@ -228,7 +228,7 @@ Docker images take this one step further: `lowerdir` accepts a colon-separated l
 
 ## Step 7: networking
 
-Our container has `--net` isolation and therefore no network at all. Docker's default bridge network is built from three pieces: a **veth pair** (a virtual cable with one end on the host and one in the container), a **bridge** (a virtual switch, `docker0`) connecting all the host ends, and an **iptables NAT rule** so that traffic leaving the bridge gets the host's address. I've covered building that by hand in detail in [Linux Network Namespaces]({{< relref "linux-network-namespaces.md" >}}), so here is the minimal version: a single cable between host and container.
+Our container has `--net` isolation and therefore no network at all. Docker's default bridge network is built from three pieces: a **veth pair** (a virtual cable with one end on the host and one in the container), a **bridge** (a virtual switch, `docker0`) connecting all the host ends, and an **iptables NAT rule** so that traffic leaving the bridge gets the host's address. I've covered building that by hand in detail in [Linux Network Namespaces]({{< relref "20261118_linux-network-namespaces.md" >}}), so here is the minimal version: a single cable between host and container.
 
 Find the PID of a running container from step 3, then on the host:
 

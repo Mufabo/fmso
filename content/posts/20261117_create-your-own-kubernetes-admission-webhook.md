@@ -523,7 +523,7 @@ ENTRYPOINT ["/pod-guard"]
 
 The API server needs two things: a serving certificate for the webhook whose name matches the Service DNS name, and the CA that signed it in the webhook configuration's `caBundle` field. You can generate these with `openssl` and paste base64 into YAML, but then you have to rotate them by hand. **cert-manager** does both: it issues the certificate into a Secret, and its **CA injector** copies the CA into any webhook configuration annotated with `cert-manager.io/inject-ca-from`[^5].
 
-My [post on TLS](/posts/tls-explained-etcd-https/) explains what's happening underneath if the terms are unfamiliar.
+My [post on TLS](/posts/20261105_tls-explained-etcd-https/) explains what's happening underneath if the terms are unfamiliar.
 
 ```yaml
 apiVersion: v1
@@ -811,7 +811,7 @@ Admission webhooks are one of the few pieces of user code that sit in the critic
 
 **Be idempotent and deterministic.** The same input must give the same answer, on every replica, on every reinvocation.
 
-**Don't trust that you see everything.** Webhooks don't see requests for webhook configurations or admission policies themselves, so you can't use a webhook to protect itself from deletion. Use RBAC for that, and remember from my [post on privilege escalation](/posts/preventing-privilege-escalation-in-kubernetes/) that permission to edit webhook configurations is effectively cluster-admin: a malicious mutating webhook can inject anything into every new Pod.
+**Don't trust that you see everything.** Webhooks don't see requests for webhook configurations or admission policies themselves, so you can't use a webhook to protect itself from deletion. Use RBAC for that, and remember from my [post on privilege escalation](/posts/20261116_preventing-privilege-escalation-in-kubernetes/) that permission to edit webhook configurations is effectively cluster-admin: a malicious mutating webhook can inject anything into every new Pod.
 
 **Watch the API server's metrics.** `apiserver_admission_webhook_admission_duration_seconds` shows latency per webhook, `apiserver_admission_webhook_rejection_count` shows rejections (including those caused by failures and timeouts, labelled by `error_type`), and `apiserver_admission_webhook_fail_open_count` shows how often `failurePolicy: Ignore` let something through[^2]. Alert on all three.
 

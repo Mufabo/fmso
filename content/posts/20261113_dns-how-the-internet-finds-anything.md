@@ -149,7 +149,7 @@ There's an old sysadmin joke: *It's not DNS. There's no way it's DNS. It was DNS
 
 **Attacks on DNS providers.** In October 2016, the Mirai botnet, made up of hacked cameras and routers, flooded the managed DNS provider Dyn. Sites that used Dyn as their only DNS provider, including Twitter, Reddit, and Netflix, were unreachable for large parts of the US for hours.[^13] Many companies have since added a second DNS provider.
 
-**Self-inflicted outages.** In my [BGP post](/posts/bgp-the-protocol-holding-the-internet-together/), the October 2021 Facebook outage came up. Facebook's own DNS servers withdrew their BGP routes when they lost contact with the data centres. The DNS records were fine, but nobody could reach the servers holding them, so Facebook, Instagram, and WhatsApp simply disappeared.[^14]
+**Self-inflicted outages.** In my [BGP post](/posts/20261110_bgp-the-protocol-holding-the-internet-together/), the October 2021 Facebook outage came up. Facebook's own DNS servers withdrew their BGP routes when they lost contact with the data centres. The DNS records were fine, but nobody could reach the servers holding them, so Facebook, Instagram, and WhatsApp simply disappeared.[^14]
 
 **Everyday mistakes.** Expired domains, typos in records, forgotten delegations, and a `CNAME` pointing to a deleted cloud resource (which an attacker can then claim, a "subdomain takeover").
 

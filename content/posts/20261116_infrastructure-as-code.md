@@ -352,7 +352,7 @@ Once a team is bigger than one person, `apply` should happen in one controlled p
                          merge ──► apply the saved plan ──► state updated in backend
 ```
 
-Atlantis (open source), HCP Terraform, Spacelift, env0, Scalr and Terragrunt's own platform all implement variants of this loop. If you already run Tekton or GitHub Actions, a plain pipeline does the job too. Give the pipeline its cloud credentials through OIDC federation rather than long-lived access keys, and give humans read-only access to production consoles. The follow-up post on [CI/CD for Infrastructure as Code]({{< relref "cicd-for-infrastructure-as-code" >}}) builds this pipeline end to end, with multiple environments and version control.
+Atlantis (open source), HCP Terraform, Spacelift, env0, Scalr and Terragrunt's own platform all implement variants of this loop. If you already run Tekton or GitHub Actions, a plain pipeline does the job too. Give the pipeline its cloud credentials through OIDC federation rather than long-lived access keys, and give humans read-only access to production consoles. The follow-up post on [CI/CD for Infrastructure as Code]({{< relref "20261116_cicd-for-infrastructure-as-code" >}}) builds this pipeline end to end, with multiple environments and version control.
 
 ### Drift detection
 

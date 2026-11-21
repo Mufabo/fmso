@@ -8,7 +8,7 @@ tags: ["kubernetes", "kyverno", "policy as code", "admission control", "security
 categories: ["Programming"]
 ---
 
-In my [post on admission webhooks](/posts/create-your-own-kubernetes-admission-webhook/) we built `pod-guard`, a small Go service that rejects Pods without a `team` label and fills in safe defaults. It worked, but it came with a lot of work around it: TLS certificates, a highly available Deployment, idempotent JSON patches, metrics and a break-glass plan. And it only knew two rules.
+In my [post on admission webhooks](/posts/20261117_create-your-own-kubernetes-admission-webhook/) we built `pod-guard`, a small Go service that rejects Pods without a `team` label and fills in safe defaults. It worked, but it came with a lot of work around it: TLS certificates, a highly available Deployment, idempotent JSON patches, metrics and a break-glass plan. And it only knew two rules.
 
 **Kyverno** is the answer to "I want rules like that, but I don't want to write and run a webhook for each one". It's a policy engine for Kubernetes: you install it once, and then you write policies as ordinary Kubernetes resources. Kyverno takes care of the webhook, the certificates and the reporting.
 
@@ -111,7 +111,7 @@ spec:
       message: "Images must use an explicit tag other than 'latest', or a digest."
 ```
 
-If you've read my posts on [privilege escalation](/posts/preventing-privilege-escalation-in-kubernetes/) or admission webhooks, most of this will look familiar. `matchConstraints`, `variables` and `validations` with CEL `expression`s work just as they do in a native Kubernetes `ValidatingAdmissionPolicy`. Kyverno adds a few things on top:
+If you've read my posts on [privilege escalation](/posts/20261116_preventing-privilege-escalation-in-kubernetes/) or admission webhooks, most of this will look familiar. `matchConstraints`, `variables` and `validations` with CEL `expression`s work just as they do in a native Kubernetes `ValidatingAdmissionPolicy`. Kyverno adds a few things on top:
 
 - **`validationActions`** decides what happens when a check fails. `Deny` rejects the request, `Warn` lets it through with a warning, and `Audit` lets it through and only records the result in a policy report[^6]. A good rollout starts with `Audit`, looks at the reports, and switches to `Deny` once they're clean.
 - **`evaluation.background`** has Kyverno re-check resources that already exist. Admission control only sees new requests. The background scan tells you about the Pods that were running before the policy existed[^6].
@@ -357,12 +357,12 @@ The CEL-based policy types also make it easier to move between Kyverno and nativ
 
 ## Running Kyverno in production
 
-Kyverno is a webhook, so everything from the [webhook post](/posts/create-your-own-kubernetes-admission-webhook/) applies:
+Kyverno is a webhook, so everything from the [webhook post](/posts/20261117_create-your-own-kubernetes-admission-webhook/) applies:
 
 - **Run it highly available.** Use several admission controller replicas spread across nodes, with a PodDisruptionBudget. A Kyverno outage combined with fail-closed policies blocks deployments.
 - **Don't let it gate itself or its dependencies.** Keep `kube-system`, the `kyverno` namespace, your CNI and DNS out of Kyverno's scope. Its default configuration already excludes some system namespaces. Check what yours excludes before you add policies that match everything.
 - **Roll out with `Audit` first.** Watch the policy reports, then switch to `Deny` namespace by namespace.
-- **Protect the policies.** Permission to create, edit or delete Kyverno policies or exceptions is effectively permission to switch off your guardrails, and a malicious `MutatingPolicy` can inject anything into every new Pod. Treat these permissions like cluster-admin, as described in the [privilege escalation post](/posts/preventing-privilege-escalation-in-kubernetes/).
+- **Protect the policies.** Permission to create, edit or delete Kyverno policies or exceptions is effectively permission to switch off your guardrails, and a malicious `MutatingPolicy` can inject anything into every new Pod. Treat these permissions like cluster-admin, as described in the [privilege escalation post](/posts/20261116_preventing-privilege-escalation-in-kubernetes/).
 - **Be careful with lookups.** Policies that call HTTP endpoints or read many resources add latency to every matching request. Since Kyverno 1.18, HTTP calls to loopback addresses and cloud metadata services are blocked by default, and namespaced policies can't make HTTP calls unless you turn that on[^13]. Leave those defaults on.
 - **Keep up with releases.** Kyverno releases roughly every three months, and since 1.18 only the current and the previous release get patches[^14]. A cluster running a Kyverno version that's two releases old no longer gets security fixes.
 - **Read the hardening guide.** The project published a threat model and hardening guide written by ControlPlane[^15].

@@ -128,7 +128,7 @@ The best long-term evidence comes from the ACTIVE trial, which randomised 2,832 
 - **Memory training effects on memory performance were no longer detectable.**
 - All three training groups, including memory, reported less difficulty with everyday activities than controls.
 
-A 20-year follow-up linked to Medicare records found lower dementia diagnoses after speed training with booster sessions, but not significantly after memory training (Coe et al., 2026; covered in more detail in my [cognitive health guide](/posts/cognitive-health-guide/)). Even Dresler doubted that loci training would do much better or worse than other cognitive training regimes at preventing decline.
+A 20-year follow-up linked to Medicare records found lower dementia diagnoses after speed training with booster sessions, but not significantly after memory training (Coe et al., 2026; covered in more detail in my [cognitive health guide](/posts/20261101_cognitive-health-guide/)). Even Dresler doubted that loci training would do much better or worse than other cognitive training regimes at preventing decline.
 
 ## Does it transfer?
 

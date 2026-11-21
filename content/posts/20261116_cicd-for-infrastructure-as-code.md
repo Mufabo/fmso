@@ -8,7 +8,7 @@ tags: ["infrastructure as code", "ci/cd", "opentofu", "terraform", "github actio
 categories: ["Programming"]
 ---
 
-In the [Infrastructure as Code post]({{< relref "infrastructure-as-code" >}}) I ended with "run it from a pipeline, not a laptop" and a small diagram. This post fills that in. It covers three things that are tightly linked:
+In the [Infrastructure as Code post]({{< relref "20261116_infrastructure-as-code" >}}) I ended with "run it from a pipeline, not a laptop" and a small diagram. This post fills that in. It covers three things that are tightly linked:
 
 1. **Version control**: how the repository is laid out, how modules are versioned, and which branching model works for infrastructure.
 2. **Multiple environments**: how dev, staging and production stay separate but similar.

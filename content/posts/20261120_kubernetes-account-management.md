@@ -12,7 +12,7 @@ The first time you try to give a colleague access to a Kubernetes cluster, you l
 
 This post explains how that fits together: what an account is in Kubernetes, which parts Kubernetes manages and which it leaves to you, the ways a person can log in, how machines and CI pipelines get an identity, and how to run the full lifecycle: onboarding, access reviews and offboarding.
 
-Two earlier posts cover neighbouring topics in depth, so this one only touches them: [Using Kubernetes Service Account Tokens]({{< relref "kubernetes-service-account-tokens.md" >}}) for workload identity, and [Authorization in Kubernetes]({{< relref "authorization-in-kubernetes.md" >}}) for what an identity is allowed to do once it is known.
+Two earlier posts cover neighbouring topics in depth, so this one only touches them: [Using Kubernetes Service Account Tokens]({{< relref "20261107_kubernetes-service-account-tokens.md" >}}) for workload identity, and [Authorization in Kubernetes]({{< relref "20261116_authorization-in-kubernetes.md" >}}) for what an identity is allowed to do once it is known.
 
 Everything here is based on Kubernetes v1.37, the current release at the time of writing.
 
@@ -284,7 +284,7 @@ The principle doesn't change: the cloud IAM is the identity source, and you stil
 
 ## Service accounts: identities for workloads
 
-Service accounts are the one kind of account Kubernetes manages itself. They are cheap, namespaced, and meant to be created **one per application**. The details of their tokens are in the [service account tokens post]({{< relref "kubernetes-service-account-tokens.md" >}}). From an account management point of view, the rules are:
+Service accounts are the one kind of account Kubernetes manages itself. They are cheap, namespaced, and meant to be created **one per application**. The details of their tokens are in the [service account tokens post]({{< relref "20261107_kubernetes-service-account-tokens.md" >}}). From an account management point of view, the rules are:
 
 - **Never run workloads as `default`.** Every Pod that doesn't set `serviceAccountName` shares it, and so shares any permission someone ever bound to it.
 - **Turn off token automounting** for workloads that don't call the Kubernetes API.
@@ -342,7 +342,7 @@ A typical group design:
 | `oidc:auditors` | `view` plus read on RBAC objects | Cluster-wide, read-only |
 | `github:deployers` | Custom deploy Role | Only the namespaces the pipeline deploys to |
 
-The [authorization post]({{< relref "authorization-in-kubernetes.md" >}}) covers how these roles work and which permissions are more dangerous than they look.
+The [authorization post]({{< relref "20261116_authorization-in-kubernetes.md" >}}) covers how these roles work and which permissions are more dangerous than they look.
 
 ## The account lifecycle
 

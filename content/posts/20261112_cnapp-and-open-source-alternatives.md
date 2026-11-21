@@ -8,7 +8,7 @@ tags: ["security", "cloud", "cnapp", "cspm", "kubernetes", "open source"]
 categories: ["Security"]
 ---
 
-If you work anywhere near cloud infrastructure, you've probably run into the acronym CNAPP, usually in a vendor pitch, or in the headline about Google paying $32 billion for Wiz. This post explains what a CNAPP actually is, who sells them, and how far you can get with open source tools instead. A [follow-up post]({{< relref "building-an-open-source-cnapp" >}}) looks at what it would take to replace a commercial CNAPP entirely.
+If you work anywhere near cloud infrastructure, you've probably run into the acronym CNAPP, usually in a vendor pitch, or in the headline about Google paying $32 billion for Wiz. This post explains what a CNAPP actually is, who sells them, and how far you can get with open source tools instead. A [follow-up post]({{< relref "20261112_building-an-open-source-cnapp" >}}) looks at what it would take to replace a commercial CNAPP entirely.
 
 ## What a CNAPP is
 
@@ -209,7 +209,7 @@ Steampipe and Powerpipe can replace or complement Prowler if your team is happie
 - **One UI.** You'll have several dashboards, or you'll build one.
 - **Maintenance and supply chain risk.** Every tool you run is something to patch, upgrade and secure. The Trivy incident is a reminder that security tooling is part of your attack surface.
 
-The [follow-up post]({{< relref "building-an-open-source-cnapp" >}}) goes through each of these gaps in detail.
+The [follow-up post]({{< relref "20261112_building-an-open-source-cnapp" >}}) goes through each of these gaps in detail.
 
 ## Summary
 

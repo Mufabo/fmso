@@ -8,7 +8,7 @@ tags: ["security", "cloud", "cnapp", "cspm", "ciem", "dspm", "open source"]
 categories: ["Security"]
 ---
 
-In the [previous post]({{< relref "cnapp-and-open-source-alternatives" >}}) I explained what a CNAPP is and mapped its capabilities onto open source tools. The natural follow-up question: could you skip the commercial platforms (Wiz, Palo Alto's Cortex Cloud, CrowdStrike, Microsoft Defender for Cloud, Orca and the rest) and run on open source alone? What would that take, and what would still be missing?
+In the [previous post]({{< relref "20261112_cnapp-and-open-source-alternatives" >}}) I explained what a CNAPP is and mapped its capabilities onto open source tools. The natural follow-up question: could you skip the commercial platforms (Wiz, Palo Alto's Cortex Cloud, CrowdStrike, Microsoft Defender for Cloud, Orca and the rest) and run on open source alone? What would that take, and what would still be missing?
 
 The short answer: you can replace most of the **checks**. What you can't download is the **product around them**: the correlation that turns millions of findings into a short ranked list, the same depth of coverage on every cloud, the research team, and the workflow. Those you'd have to build and staff yourself. Some of it is a few weeks of glue code. Some of it, like data security posture management, is a genuine gap with no good open source answer today.
 

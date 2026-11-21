@@ -14,7 +14,7 @@ A follow-up was even more striking. Six of those contractions a day, five days a
 
 That is the core question of this post: can you get meaningfully stronger with nothing but short, frequent bouts spread through the day, and no workouts at all? Strength coaches have a name for one version of this, "greasing the groove." Exercise scientists call another version resistance exercise snacks. The two ideas come from different worlds but are converging on the same answer.
 
-For the cardio side of exercise snacks (stair sprints, VO2max and the UK Biobank data), see my earlier post on [exercise snacks]({{< relref "exercise-snacks.md" >}}). This one is only about strength.
+For the cardio side of exercise snacks (stair sprints, VO2max and the UK Biobank data), see my earlier post on [exercise snacks]({{< relref "20261031_exercise-snacks.md" >}}). This one is only about strength.
 
 ## Two traditions, one idea
 
@@ -103,7 +103,7 @@ All differences between groups were statistically significant. Note the pattern:
 
 **Office workers, 10 minutes a workday (Brandt et al., 2024, *Frontiers in Public Health*)[^1].** Women with desk jobs who did little or no resistance training did 10 minutes of bodyweight exercise snacks during working hours, five days a week, for 12 weeks. The snack group gained 0.42 kg of muscle mass while controls lost 0.16 kg. Strength did not differ significantly between groups, although trunk and upper-body push strength trended in the snack group's favour. Participants chose their own group rather than being randomised, so treat this as a pilot.
 
-**Older adults.** The Bath pilot (Perkin et al., 2019)[^7] had healthy older adults do two 5-minute snacks a day for 28 days and found better sit-to-stand performance (+31%), leg power and thigh muscle size. An Australian trial (Fyfe et al., 2022)[^3] randomised older adults to 9-minute snacks once, twice or three times a day for four weeks. Adherence was 97%, 82% and 81% respectively, which is a useful reality check: more snacks per day means more missed snacks. The 2026 *British Journal of Sports Medicine* meta-analysis found that snacks improved muscular endurance in older adults but not maximal strength (Rodríguez et al., 2026)[^9]. My [exercise snacks]({{< relref "exercise-snacks.md" >}}) post covers these trials in more detail.
+**Older adults.** The Bath pilot (Perkin et al., 2019)[^7] had healthy older adults do two 5-minute snacks a day for 28 days and found better sit-to-stand performance (+31%), leg power and thigh muscle size. An Australian trial (Fyfe et al., 2022)[^3] randomised older adults to 9-minute snacks once, twice or three times a day for four weeks. Adherence was 97%, 82% and 81% respectively, which is a useful reality check: more snacks per day means more missed snacks. The 2026 *British Journal of Sports Medicine* meta-analysis found that snacks improved muscular endurance in older adults but not maximal strength (Rodríguez et al., 2026)[^9]. My [exercise snacks]({{< relref "20261031_exercise-snacks.md" >}}) post covers these trials in more detail.
 
 **Bodyweight progressions can match weights.** A related, non-snack study is useful here. Moderately trained men who did progressively harder push-up variations three times a week for four weeks improved their bench press 1RM similarly to men who trained on the bench press itself (Kotarsky et al., 2018)[^6]. Bodyweight work can build real strength, but only if the exercise keeps getting harder.
 

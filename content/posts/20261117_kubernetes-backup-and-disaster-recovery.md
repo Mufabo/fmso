@@ -72,7 +72,7 @@ ETCDCTL_API=3 etcdctl \
   snapshot save /var/backups/etcd-$(date +%Y%m%d-%H%M).db
 ```
 
-If `etcdctl` isn't installed on the host, run it inside the etcd Pod, as shown in [the kubeadm upgrade post](/posts/kubeadm-cluster-upgrade/). Then check the file:
+If `etcdctl` isn't installed on the host, run it inside the etcd Pod, as shown in [the kubeadm upgrade post](/posts/20261107_kubeadm-cluster-upgrade/). Then check the file:
 
 ```bash
 etcdutl snapshot status /var/backups/etcd-20261117-0300.db --write-out=table
@@ -86,7 +86,7 @@ A few things to get right:
 - **Automate it.** A CronJob or a systemd timer on a control plane node, every hour or every few hours depending on your RPO, with old snapshots pruned.
 - **Get it off the node.** A snapshot sitting in `/var/backups` on the control plane node dies with that node. Copy it to object storage immediately (more on where below).
 - **Back up `/etc/kubernetes/` too.** The cluster's CA and certificates aren't in etcd. Without the original CA, a restored cluster issues new certificates, and every kubeconfig and every node's kubelet stops trusting it.
-- **Treat it as a secret.** An etcd snapshot contains every Secret in the cluster. If you've enabled [encryption at rest](/posts/kubernetes-secrets/), the Secrets in the snapshot are encrypted, which is good, but then you also need the `EncryptionConfiguration` file or access to the KMS key. A snapshot whose Secrets you can't decrypt restores a cluster in which no workload can read its credentials.
+- **Treat it as a secret.** An etcd snapshot contains every Secret in the cluster. If you've enabled [encryption at rest](/posts/20261112_kubernetes-secrets/), the Secrets in the snapshot are encrypted, which is good, but then you also need the `EncryptionConfiguration` file or access to the KMS key. A snapshot whose Secrets you can't decrypt restores a cluster in which no workload can read its credentials.
 
 ### Restoring a snapshot
 
@@ -180,7 +180,7 @@ That keeps thirty days of nightly backups of everything except system namespaces
 
 Velero backs up the object tarball the same way every time. For volume **data**, it has three methods, and choosing between them is the most important decision in a Velero setup:[^6][^7]
 
-1. **CSI snapshots.** Velero asks the CSI driver for a `VolumeSnapshot` of each PVC, using the snapshot machinery described in [the storage post](/posts/persistent-storage-in-kubernetes/). Fast and cheap, but the snapshot stays **in the storage system**, usually in the same cloud account and region as the volume. Lose the account or the region and you lose the snapshots with it.
+1. **CSI snapshots.** Velero asks the CSI driver for a `VolumeSnapshot` of each PVC, using the snapshot machinery described in [the storage post](/posts/20261117_persistent-storage-in-kubernetes/). Fast and cheap, but the snapshot stays **in the storage system**, usually in the same cloud account and region as the volume. Lose the account or the region and you lose the snapshots with it.
 2. **CSI snapshot data movement.** Velero takes a CSI snapshot, mounts it, and uploads its contents to the backup bucket, then deletes the local snapshot. Enable it per backup with `--snapshot-move-data`. Slower, but the data now lives wherever your bucket lives, which can be another region or another provider. This is usually the right default for disaster recovery.
 3. **File system backup.** The node agent reads the files straight from the volume mounted in the running Pod and uploads them with Kopia. It works with any volume type, even ones without snapshot support like `hostPath` or some NFS setups, but it isn't a point-in-time copy: files change while they're being read. Opt in per Pod with the annotation `backup.velero.io/backup-volumes: <volume-name>`, or for everything with `--default-volumes-to-fs-backup`.
 
@@ -295,8 +295,8 @@ Test:       alert on backup age, restore regularly, drill a full rebuild, keep a
 
 ## References
 
-[^1]: See [Infrastructure as Code](/posts/infrastructure-as-code/) on this blog for managing the cluster's own infrastructure as code.
-[^2]: [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/), Kubernetes documentation. See also [Secrets in Kubernetes](/posts/kubernetes-secrets/) on this blog.
+[^1]: See [Infrastructure as Code](/posts/20261116_infrastructure-as-code/) on this blog for managing the cluster's own infrastructure as code.
+[^2]: [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/), Kubernetes documentation. See also [Secrets in Kubernetes](/posts/20261112_kubernetes-secrets/) on this blog.
 [^3]: [Operating etcd clusters for Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/), Kubernetes documentation: backing up and restoring an etcd cluster.
 [^4]: [Disaster recovery](https://etcd.io/docs/v3.6/op-guide/recovery/), etcd documentation (v3.6).
 [^5]: [How Velero Works](https://velero.io/docs/main/how-velero-works/), Velero documentation.

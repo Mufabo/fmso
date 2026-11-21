@@ -11,7 +11,7 @@ When you run `curl https://example.com`, at least five protocols cooperate to ge
 
 Each of these protocols does one job and leans on the one below it. Once you see that split, a lot of networking stops feeling like magic: why `ping` works but the website doesn't, why video calls use UDP, why HTTP/3 left TCP behind.
 
-This post goes through the main ones from the bottom up. It fits between my [networking basics post](/posts/networking-basics-for-lfcs/), which covers addressing and routing, and the [DNS post](/posts/dns-how-the-internet-finds-anything/), which covers name resolution.
+This post goes through the main ones from the bottom up. It fits between my [networking basics post](/posts/20261113_networking-basics-for-lfcs/), which covers addressing and routing, and the [DNS post](/posts/20261113_dns-how-the-internet-finds-anything/), which covers name resolution.
 
 ## The stack: one job per layer
 
@@ -327,7 +327,7 @@ Strictly speaking, TLS isn't part of the four-layer picture, but almost all real
 - **Integrity**: nobody can change it without being detected
 - **Authentication**: the server proves its identity with a certificate (and the client can too, with mutual TLS)
 
-TLS 1.3, defined in RFC 8446, cut the handshake to a single round trip, removed old and weak algorithms, and encrypts more of the handshake itself.[^18] So a fresh HTTPS connection over TCP costs one round trip for TCP and one for TLS before the first HTTP byte can be sent. Certificate management in Kubernetes is covered in my [cert-manager post](/posts/intro-to-cert-manager-on-kubernetes/).
+TLS 1.3, defined in RFC 8446, cut the handshake to a single round trip, removed old and weak algorithms, and encrypts more of the handshake itself.[^18] So a fresh HTTPS connection over TCP costs one round trip for TCP and one for TLS before the first HTTP byte can be sent. Certificate management in Kubernetes is covered in my [cert-manager post](/posts/20261120_intro-to-cert-manager-on-kubernetes/).
 
 ## HTTP: the language of the web
 
@@ -431,7 +431,7 @@ Here's what happens on a cold `curl https://example.com/` with nothing cached:
 3. **TCP handshake.** `SYN`, `SYN-ACK`, `ACK` with the server on port 443. One round trip.
 4. **TLS 1.3 handshake.** Agree on keys, verify the certificate. One round trip.
 5. **HTTP request and response.** `GET /` goes out, `200 OK` and the HTML come back. One round trip, plus however long the transfer takes under slow start.
-6. **Along the way, IP** carries every one of these packets hop by hop, each router decrementing the TTL and picking the next hop from its routing table, which across the internet is shaped by [BGP](/posts/bgp-the-protocol-holding-the-internet-together/).
+6. **Along the way, IP** carries every one of these packets hop by hop, each router decrementing the TTL and picking the next hop from its routing table, which across the internet is shaped by [BGP](/posts/20261110_bgp-the-protocol-holding-the-internet-together/).
 7. **If something fails, ICMP** may tell you: no route to host, packet too big, TTL exceeded.
 
 `curl` will show you the time spent in each phase:
@@ -467,14 +467,14 @@ Wireshark is the best way to actually *see* these protocols. Open a capture, rig
 |---|---|---|---|
 | ARP | Link | — (Ethernet directly) | Maps IPv4 addresses to MAC addresses on the local network[^25] |
 | DHCP | Application | UDP 67/68 | Hands out IP addresses, gateways, and DNS servers |
-| DNS | Application | UDP/TCP 53 | Turns names into addresses (see the [DNS post](/posts/dns-how-the-internet-finds-anything/)) |
+| DNS | Application | UDP/TCP 53 | Turns names into addresses (see the [DNS post](/posts/20261113_dns-how-the-internet-finds-anything/)) |
 | NTP | Application | UDP 123 | Keeps clocks in sync |
 | SSH | Application | TCP 22 | Encrypted remote shell, file transfer, port forwarding |
 | SMTP / IMAP | Application | TCP 25, 587 / 993 | Sending and reading email |
 | WebSocket | Application | TCP (via HTTP upgrade) | Full-duplex messaging inside an HTTP connection |
 | gRPC | Application | HTTP/2 | Remote procedure calls with Protocol Buffers |
 | SCTP | Transport | IP protocol 132 | Message-based, multi-stream, multi-homed transport, used in telecom and by WebRTC data channels[^26] |
-| BGP | Application | TCP 179 | Routing between networks on the internet (see the [BGP post](/posts/bgp-the-protocol-holding-the-internet-together/)) |
+| BGP | Application | TCP 179 | Routing between networks on the internet (see the [BGP post](/posts/20261110_bgp-the-protocol-holding-the-internet-together/)) |
 
 ## Why the layers matter
 

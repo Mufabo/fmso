@@ -8,7 +8,7 @@ tags: ["open source", "o3de", "github", "git", "gamedev", "game engines", "contr
 categories: ["Programming"]
 ---
 
-In my [look at open source game engines in 2026](/posts/state-of-open-source-game-engines-2026/) I called the Open 3D Engine (O3DE) "the heavyweight": a large, modular C++ engine descended from Amazon Lumberyard and now run by the Open 3D Foundation under the Linux Foundation. That size is exactly why it's a good case study for contributing to open source. If you can find your way around a project this big, smaller ones will feel easy.
+In my [look at open source game engines in 2026](/posts/20261108_state-of-open-source-game-engines-2026/) I called the Open 3D Engine (O3DE) "the heavyweight": a large, modular C++ engine descended from Amazon Lumberyard and now run by the Open 3D Foundation under the Linux Foundation. That size is exactly why it's a good case study for contributing to open source. If you can find your way around a project this big, smaller ones will feel easy.
 
 This post covers the general approach first, then walks through how it works for O3DE specifically.
 
