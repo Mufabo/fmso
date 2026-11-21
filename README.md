@@ -1,9 +1,6 @@
 # fatih.machtsachen.online — a personal Hugo blog
 
-A small, fast personal blog. No JavaScript, no webfonts, no trackers.
-Serif for prose, monospace for machine facts (dates, tags, code), dark
-mode via `prefers-color-scheme`, syntax highlighting at build time, and
-an RSS feed at `/index.xml`.
+My personal ~~AI-slop dumping ground~~ blog.
 
 Requires [Hugo](https://gohugo.io/) **extended edition, 0.146 or newer**
 (the templates use Hugo's current layout system). Built and tested with
