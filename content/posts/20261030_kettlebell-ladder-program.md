@@ -48,7 +48,7 @@ The ladder format does two jobs at once. The swings keep your heart rate up betw
 
 Pick the heaviest bell you can swing with a crisp hip snap *and* goblet squat for about 8 controlled reps. With only one bell, the goblet squat usually sets the limit, because holding the bell at your chest gets hard before the swing does.
 
-The table below reflects common coaching practice rather than research, but it matches the loads used in kettlebell studies: 16 kg for men and 8 kg for women in one study ([Hulsey et al. 2012](#references)), and 12 kg for men under 70 kg and 16 kg above in another ([Lake & Lauder 2012](#references)).
+The table below reflects common coaching practice rather than research, but it matches the loads used in kettlebell studies: 16 kg for men and 8 kg for women in one study,[^1] and 12 kg for men under 70 kg and 16 kg above in another.[^2]
 
 | Starting point | Women | Men |
 | --- | --- | --- |
@@ -69,7 +69,7 @@ Rest about 2 minutes between ladders at first, and bring it down to 60–90 seco
 
 **Within a ladder,** move straight from one exercise to the next. Put the bell down safely, take a breath or two, and go. Alternating already gives each muscle group a little rest: swings rest your chest and arms, push-ups rest your hips.
 
-**Between ladders,** the research on muscle growth sets the floor. A 2024 meta-analysis of randomized trials found a small benefit for resting longer than 60 seconds between sets, and no detectable extra benefit beyond about 90 seconds ([Singer et al. 2024](#references)). The best-known single trial found more muscle growth with 3 minutes than with 1 minute in trained men ([Schoenfeld et al. 2016](#references)), but most people in the meta-analysis were untrained, and in untrained people short and long rests both work. Most of the effect seems to come from shorter rests forcing you to do less work in the next set.
+**Between ladders,** the research on muscle growth sets the floor. A 2024 meta-analysis of randomized trials found a small benefit for resting longer than 60 seconds between sets, and no detectable extra benefit beyond about 90 seconds.[^3] The best-known single trial found more muscle growth with 3 minutes than with 1 minute in trained men,[^4] but most people in the meta-analysis were untrained, and in untrained people short and long rests both work. Most of the effect seems to come from shorter rests forcing you to do less work in the next set.
 
 For the endurance side, shorter rest is the main way to make this program harder over time without adding weight. So rest decreases in steps (see the next section), and 60 seconds is where you stop cutting and start adding reps or weight instead.
 
@@ -107,7 +107,7 @@ If your lower back lifts off the floor, drop a level.
 | 3 | Full push-up from the floor |
 | 4 | Feet elevated, or a slow 3-second lowering |
 
-A push-up made hard enough builds muscle about as well as a light bench press. In an 8-week trial, 18 young men did either bench press at 40% of their maximum or push-ups adjusted (by kneeling or raising the hands) to the same load, 3 sets to failure twice a week. Chest and triceps thickness grew by similar amounts in both groups ([Kikuchi & Nakazato 2017](#references)). A shorter 4-week trial in moderately trained men found push-ups increased bench press strength as well as benching did, though neither group's muscle size changed measurably in that time ([Kotarsky et al. 2018](#references)).
+A push-up made hard enough builds muscle about as well as a light bench press. In an 8-week trial, 18 young men did either bench press at 40% of their maximum or push-ups adjusted (by kneeling or raising the hands) to the same load, 3 sets to failure twice a week. Chest and triceps thickness grew by similar amounts in both groups.[^5] A shorter 4-week trial in moderately trained men found push-ups increased bench press strength as well as benching did, though neither group's muscle size changed measurably in that time.[^6]
 
 ## Progressing over 12 weeks
 
@@ -139,30 +139,30 @@ Kettlebell training reliably builds strength and work capacity in beginners, but
 
 ### Strength and power
 
-Swings make beginners stronger. In one study, college-age men did 12 rounds of 30 seconds of swings with 30 seconds of rest, twice a week for 6 weeks. Their half-squat maximum rose by about 10% and their vertical jump by about 20%, matching a group that did jump squats ([Lake & Lauder 2012](#references)). In another 6-week study, swings, accelerated swings and goblet squats with a 16 kg bell increased squat and power clean strength, but less than a barbell weightlifting program did (squat about 4% versus 14%), and neither program changed body composition ([Otto et al. 2012](#references)).
+Swings make beginners stronger. In one study, college-age men did 12 rounds of 30 seconds of swings with 30 seconds of rest, twice a week for 6 weeks. Their half-squat maximum rose by about 10% and their vertical jump by about 20%, matching a group that did jump squats.[^2] In another 6-week study, swings, accelerated swings and goblet squats with a 16 kg bell increased squat and power clean strength, but less than a barbell weightlifting program did (squat about 4% versus 14%), and neither program changed body composition.[^7]
 
-In older adults, a 12-week hardstyle kettlebell program (swings, cleans, presses, goblet squats and get-ups) improved grip strength, walking distance in a 6-minute test, deadlift strength and leg lean mass in 32 inactive people aged 59–79. Attendance was over 90%, and there were four minor adverse events ([Meigh et al. 2022](#references)).
+In older adults, a 12-week hardstyle kettlebell program (swings, cleans, presses, goblet squats and get-ups) improved grip strength, walking distance in a 6-minute test, deadlift strength and leg lean mass in 32 inactive people aged 59–79. Attendance was over 90%, and there were four minor adverse events.[^8]
 
 ### Endurance
 
-Swings drive your heart rate high, but your oxygen use, which is what builds aerobic fitness, lags behind. In 12 minutes of continuous swings with a 16 kg bell, ten men averaged about 87% of maximal heart rate but only about 65% of their maximal oxygen uptake ([Farrar et al. 2010](#references)). When swings and treadmill running were matched for how hard they felt, heart rate was the same, but running used 25–39% more oxygen and energy ([Hulsey et al. 2012](#references)).
+Swings drive your heart rate high, but your oxygen use, which is what builds aerobic fitness, lags behind. In 12 minutes of continuous swings with a 16 kg bell, ten men averaged about 87% of maximal heart rate but only about 65% of their maximal oxygen uptake.[^9] When swings and treadmill running were matched for how hard they felt, heart rate was the same, but running used 25–39% more oxygen and energy.[^1]
 
 Training studies are split:
 
-- In 40 office workers doing kettlebell training three times a week for 8 weeks, neck, shoulder and low-back pain fell and back strength rose, but aerobic fitness did not change ([Jay et al. 2011](#references)).
-- In female college soccer players, 20 minutes of 15-second kettlebell snatch intervals three times a week raised VO2max by about 6% in 4 weeks, while a circuit-training group did not improve ([Falatic et al. 2015](#references)). Snatches are more demanding than swings, and the bell went overhead every rep.
+- In 40 office workers doing kettlebell training three times a week for 8 weeks, neck, shoulder and low-back pain fell and back strength rose, but aerobic fitness did not change.[^10]
+- In female college soccer players, 20 minutes of 15-second kettlebell snatch intervals three times a week raised VO2max by about 6% in 4 weeks, while a circuit-training group did not improve.[^11] Snatches are more demanding than swings, and the bell went overhead every rep.
 
 A ladder program with rest between ladders behaves more like interval strength training than continuous cardio. If aerobic fitness matters to you, add one or two sessions of brisk walking, cycling or easy running on your off days.
 
 ### Muscle growth
 
-This program can build muscle, but only if the sets are hard enough. Muscle grows about as well with light loads as with heavy ones when sets are taken close to failure ([Schoenfeld et al. 2017](#references)). You don't have to reach failure: a meta-analysis found no significant difference between training to failure and stopping a little short ([Refalo et al. 2023](#references)), but growth does improve as sets end closer to failure ([Robinson et al. 2024](#references)).
+This program can build muscle, but only if the sets are hard enough. Muscle grows about as well with light loads as with heavy ones when sets are taken close to failure.[^12] You don't have to reach failure: a meta-analysis found no significant difference between training to failure and stopping a little short,[^13] but growth does improve as sets end closer to failure.[^14]
 
 That is the main weakness of short ladders with a light bell: a 4-rep rung of goblet squats is far from failure. The fatigue that builds up over five ladders helps, but only if the exercise is hard enough to begin with. That is why the exercise variations are chosen at 8–15 fresh reps, and why the progression keeps making things harder.
 
-Combining cardio and strength work in the same session does not seem to hold back muscle growth. A meta-analysis of 43 studies found concurrent training did not reduce gains in muscle size or maximal strength compared with strength training alone, though gains in explosive strength were blunted, especially when both were done in the same session ([Schumann et al. 2022](#references)).
+Combining cardio and strength work in the same session does not seem to hold back muscle growth. A meta-analysis of 43 studies found concurrent training did not reduce gains in muscle size or maximal strength compared with strength training alone, though gains in explosive strength were blunted, especially when both were done in the same session.[^15]
 
-The 2026 position stand from the American College of Sports Medicine puts the big picture plainly: the largest gains come from going from no resistance training to any, training every major muscle group at least twice a week is the target, and bodyweight and home training work ([ACSM 2026](#references)). This program does that for most of the body, with one gap.
+The 2026 position stand from the American College of Sports Medicine puts the big picture plainly: the largest gains come from going from no resistance training to any, training every major muscle group at least twice a week is the target, and bodyweight and home training work.[^16] This program does that for most of the body, with one gap.
 
 ## Two gaps to know about
 
@@ -189,21 +189,19 @@ Each session: 5–8 minutes of warm-up (hip hinges, bodyweight squats, wall or i
 - **Progress** by shortening rest, then by harder variations, a heavier bell or longer ladders.
 - **Expect** clear gains in strength and work capacity, modest muscle growth if sets are hard enough, and better aerobic fitness if you add some easy cardio on off days.
 
-## References
-
-1. American College of Sports Medicine. [Resistance training prescription for muscle function, hypertrophy, and physical performance in healthy adults: an overview of reviews](https://acsm.org/resistance-training-guidelines-update-2026/) (position stand). Currier BS, D'Souza AC, Singh MAF, et al. *Medicine & Science in Sports & Exercise*. 2026.
-2. Falatic JA, Plato PA, Holder C, Finch D, Han K, Cisar CJ. [Effects of kettlebell training on aerobic capacity](https://doi.org/10.1519/JSC.0000000000000845). *J Strength Cond Res*. 2015;29(7):1943–1947.
-3. Farrar RE, Mayhew JL, Koch AJ. Oxygen cost of kettlebell swings. *J Strength Cond Res*. 2010;24(4):1034–1036.
-4. Hulsey CR, Soto DT, Koch AJ, Mayhew JL. Comparison of kettlebell swings and treadmill running at equivalent rating of perceived exertion values. *J Strength Cond Res*. 2012;26(5):1203–1207.
-5. Jay K, Frisch D, Hansen K, et al. [Kettlebell training for musculoskeletal and cardiovascular health: a randomized controlled trial](https://doi.org/10.5271/sjweh.3136). *Scand J Work Environ Health*. 2011;37(3):196–203.
-6. Kikuchi N, Nakazato K. [Low-load bench press and push-up induce similar muscle hypertrophy and strength gain](https://pubmed.ncbi.nlm.nih.gov/29541130/). *J Exerc Sci Fit*. 2017;15(1):37–42.
-7. Kotarsky CJ, Christensen BK, Miller JS, Hackney KJ. [Effect of progressive calisthenic push-up training on muscle strength and thickness](https://pubmed.ncbi.nlm.nih.gov/29466268/). *J Strength Cond Res*. 2018;32(3):651–659.
-8. Lake JP, Lauder MA. [Kettlebell swing training improves maximal and explosive strength](https://journals.lww.com/nsca-jscr/Abstract/2012/08000/Kettlebell_Swing_Training_Improves_Maximal_and.28.aspx). *J Strength Cond Res*. 2012;26(8):2228–2233.
-9. Meigh NJ, Keogh JWL, Schram B, Hing W, Rathbone EN. [Effects of supervised high-intensity hardstyle kettlebell training on grip strength and health-related physical fitness in insufficiently active older adults: the BELL pragmatic controlled trial](https://doi.org/10.1186/s12877-022-02958-z). *BMC Geriatr*. 2022;22.
-10. Otto WH, Coburn JW, Brown LE, Spiering BA. Effects of weightlifting vs. kettlebell training on vertical jump, strength, and body composition. *J Strength Cond Res*. 2012;26(5):1199–1202.
-11. Refalo MC, Helms ER, Trexler ET, Hamilton DL, Fyfe JJ. Influence of resistance training proximity-to-failure on skeletal muscle hypertrophy: a systematic review with meta-analysis. *Sports Med*. 2023;53(3):649–665.
-12. Robinson ZP, Pelland JC, Remmert JF, et al. Exploring the dose–response relationship between estimated resistance training proximity to failure, strength gain, and muscle hypertrophy: a series of meta-regressions. *Sports Med*. 2024.
-13. Schoenfeld BJ, Pope ZK, Benik FM, et al. [Longer interset rest periods enhance muscle strength and hypertrophy in resistance-trained men](https://doi.org/10.1519/JSC.0000000000001272). *J Strength Cond Res*. 2016;30(7):1805–1812.
-14. Schoenfeld BJ, Grgic J, Ogborn D, Krieger JW. [Strength and hypertrophy adaptations between low- vs. high-load resistance training: a systematic review and meta-analysis](https://pubmed.ncbi.nlm.nih.gov/28834797/). *J Strength Cond Res*. 2017;31(12):3508–3523.
-15. Schumann M, Feuerbacher JF, Sünkeler M, et al. [Compatibility of concurrent aerobic and strength training for skeletal muscle size and function: an updated systematic review and meta-analysis](https://doi.org/10.1007/s40279-021-01587-7). *Sports Med*. 2022;52:601–612.
-16. Singer A, Wolf M, Generoso L, et al. [Give it a rest: a systematic review with Bayesian meta-analysis on the effect of inter-set rest interval duration on muscle hypertrophy](https://doi.org/10.3389/fspor.2024.1429789). *Front Sports Act Living*. 2024;6:1429789.
+[^1]: Hulsey CR, Soto DT, Koch AJ, Mayhew JL. [Comparison of kettlebell swings and treadmill running at equivalent rating of perceived exertion values](https://doi.org/10.1519/jsc.0b013e3182510629). *J Strength Cond Res*. 2012;26(5):1203–1207.
+[^2]: Lake JP, Lauder MA. [Kettlebell swing training improves maximal and explosive strength](https://journals.lww.com/nsca-jscr/Abstract/2012/08000/Kettlebell_Swing_Training_Improves_Maximal_and.28.aspx). *J Strength Cond Res*. 2012;26(8):2228–2233.
+[^3]: Singer A, Wolf M, Generoso L, et al. [Give it a rest: a systematic review with Bayesian meta-analysis on the effect of inter-set rest interval duration on muscle hypertrophy](https://doi.org/10.3389/fspor.2024.1429789). *Front Sports Act Living*. 2024;6:1429789.
+[^4]: Schoenfeld BJ, Pope ZK, Benik FM, et al. [Longer interset rest periods enhance muscle strength and hypertrophy in resistance-trained men](https://doi.org/10.1519/JSC.0000000000001272). *J Strength Cond Res*. 2016;30(7):1805–1812.
+[^5]: Kikuchi N, Nakazato K. [Low-load bench press and push-up induce similar muscle hypertrophy and strength gain](https://pubmed.ncbi.nlm.nih.gov/29541130/). *J Exerc Sci Fit*. 2017;15(1):37–42.
+[^6]: Kotarsky CJ, Christensen BK, Miller JS, Hackney KJ. [Effect of progressive calisthenic push-up training on muscle strength and thickness](https://pubmed.ncbi.nlm.nih.gov/29466268/). *J Strength Cond Res*. 2018;32(3):651–659.
+[^7]: Otto WH, Coburn JW, Brown LE, Spiering BA. [Effects of weightlifting vs. kettlebell training on vertical jump, strength, and body composition](https://doi.org/10.1519/jsc.0b013e31824f233e). *J Strength Cond Res*. 2012;26(5):1199–1202.
+[^8]: Meigh NJ, Keogh JWL, Schram B, Hing W, Rathbone EN. [Effects of supervised high-intensity hardstyle kettlebell training on grip strength and health-related physical fitness in insufficiently active older adults: the BELL pragmatic controlled trial](https://doi.org/10.1186/s12877-022-02958-z). *BMC Geriatr*. 2022;22.
+[^9]: Farrar RE, Mayhew JL, Koch AJ. [Oxygen cost of kettlebell swings](https://doi.org/10.1519/jsc.0b013e3181d15516). *J Strength Cond Res*. 2010;24(4):1034–1036.
+[^10]: Jay K, Frisch D, Hansen K, et al. [Kettlebell training for musculoskeletal and cardiovascular health: a randomized controlled trial](https://doi.org/10.5271/sjweh.3136). *Scand J Work Environ Health*. 2011;37(3):196–203.
+[^11]: Falatic JA, Plato PA, Holder C, Finch D, Han K, Cisar CJ. [Effects of kettlebell training on aerobic capacity](https://doi.org/10.1519/JSC.0000000000000845). *J Strength Cond Res*. 2015;29(7):1943–1947.
+[^12]: Schoenfeld BJ, Grgic J, Ogborn D, Krieger JW. [Strength and hypertrophy adaptations between low- vs. high-load resistance training: a systematic review and meta-analysis](https://pubmed.ncbi.nlm.nih.gov/28834797/). *J Strength Cond Res*. 2017;31(12):3508–3523.
+[^13]: Refalo MC, Helms ER, Trexler ET, Hamilton DL, Fyfe JJ. [Influence of resistance training proximity-to-failure on skeletal muscle hypertrophy: a systematic review with meta-analysis](https://doi.org/10.1007/s40279-022-01784-y). *Sports Med*. 2023;53(3):649–665.
+[^14]: Robinson ZP, Pelland JC, Remmert JF, et al. [Exploring the dose–response relationship between estimated resistance training proximity to failure, strength gain, and muscle hypertrophy: a series of meta-regressions](https://doi.org/10.1007/s40279-024-02069-2). *Sports Med*. 2024.
+[^15]: Schumann M, Feuerbacher JF, Sünkeler M, et al. [Compatibility of concurrent aerobic and strength training for skeletal muscle size and function: an updated systematic review and meta-analysis](https://doi.org/10.1007/s40279-021-01587-7). *Sports Med*. 2022;52:601–612.
+[^16]: American College of Sports Medicine. [Resistance training prescription for muscle function, hypertrophy, and physical performance in healthy adults: an overview of reviews](https://acsm.org/resistance-training-guidelines-update-2026/) (position stand). Currier BS, D'Souza AC, Singh MAF, et al. *Medicine & Science in Sports & Exercise*. 2026.

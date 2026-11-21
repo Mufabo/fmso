@@ -4,7 +4,7 @@ date: 2026-11-14
 draft: true
 description: "Can you write a kernel in Go? People have. What gets in the way, how existing projects solve it, what it costs in performance, and how to boot your first bare-metal Go program."
 summary: "Go was never designed to run without an operating system underneath it, but kernels, unikernels, firmware and whole Linux userlands have been written in it anyway. What the Go runtime expects from an OS, the four ways people work around it, what Biscuit's measurements tell us, and where the upstream bare-metal proposal stands."
-tags: ["go", "golang", "operating systems", "kernel", "osdev", "bare metal", "unikernel", "talos"]
+tags: ["go", "operating systems", "kernel", "osdev", "bare metal", "unikernel", "talos"]
 categories: ["Programming"]
 ---
 

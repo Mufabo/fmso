@@ -14,7 +14,7 @@ Phones are also awkward servers. They are designed to sleep aggressively, kill b
 
 This post covers the three realistic ways to turn an old phone into a Linux server, when to pick each one, and how to deal with the parts that make phones awkward: power management, networking and, most importantly, the battery.
 
-Everything here is current as of November 2026: Android 16/17, Termux from F-Droid, and Nura v26.06 (the distribution that until September 2026 was called postmarketOS).
+Everything here is current as of November 2026: Android 16/17, Termux from F-Droid, and Nura v26.06 (the distribution that until September 2026 was called postmarketOS).[^1]
 
 ## Three ways to get Linux on a phone
 
@@ -65,7 +65,7 @@ This is where Termux on Android gets difficult. Android does everything it can t
 
 1. **CPU sleep.** Run `termux-wake-lock` (or tap *Acquire wakelock* in the Termux notification). Without it, the CPU sleeps when the screen is off and your server stops answering.
 2. **Battery optimisation.** In Android settings, set Termux's battery usage to *Unrestricted*. Some vendors (Samsung, Xiaomi, Huawei, OnePlus) add their own extra layers of app killing; [dontkillmyapp.com](https://dontkillmyapp.com/) documents them per manufacturer.
-3. **The phantom process killer.** Since Android 12, the system kills child processes of apps when there are more than 32 of them across all apps, or when one uses too much CPU. Termux's shell and everything you start from it are such child processes. The symptom is `[Process completed (signal 9) - press Enter]` with no apparent cause. Recent Android versions have a *Disable child process restrictions* toggle in Developer options; where that is missing, you can turn the monitor off over ADB (wireless debugging works, even from Termux itself after `pkg install android-tools`):
+3. **The phantom process killer.** Since Android 12, the system kills child processes of apps when there are more than 32 of them across all apps, or when one uses too much CPU.[^2] Termux's shell and everything you start from it are such child processes. The symptom is `[Process completed (signal 9) - press Enter]` with no apparent cause. Recent Android versions have a *Disable child process restrictions* toggle in Developer options; where that is missing, you can turn the monitor off over ADB (wireless debugging works, even from Termux itself after `pkg install android-tools`):
 
    ```bash
    adb shell "settings put global settings_enable_monitor_phantom_procs false"
@@ -95,7 +95,7 @@ This is where Termux on Android gets difficult. Android does everything it can t
 
 ### A full distribution with proot-distro
 
-If you want Debian, Ubuntu, Alpine or Arch instead of Termux's own packages, `proot-distro` installs one in a directory and runs it with `proot`, which fakes a root filesystem by intercepting system calls:
+If you want Debian, Ubuntu, Alpine or Arch instead of Termux's own packages, `proot-distro` installs one in a directory and runs it with `proot`, which fakes a root filesystem by intercepting system calls:[^3]
 
 ```bash
 pkg install proot-distro
@@ -118,13 +118,13 @@ Termux is the right choice for trying the idea out, for phones nothing else supp
 
 Starting with Android 16, Google ships a **Terminal** app (enabled in Developer options) that boots a Debian virtual machine using the **Android Virtualization Framework (AVF)**: Google's crosvm virtual machine monitor on top of the pKVM hypervisor. Unlike Termux, this is a real Linux kernel with systemd, real root inside the VM, and port forwarding from the VM to the phone that the app lets you configure.
 
-The catch for our purposes is hardware. The Terminal app needs a device whose hypervisor allows non-protected VMs, which in practice means recent Pixels (Pixel 6 and later) and a handful of newer flagships. Snapdragon phones on stock firmware are generally not supported. If you have a retired Pixel 6 or 7, it's worth a try; for the typical drawer phone from 2018, it's not an option.
+The catch for our purposes is hardware. The Terminal app needs a device whose hypervisor allows non-protected VMs, which in practice means recent Pixels (Pixel 6 and later) and a handful of newer flagships. Snapdragon phones on stock firmware are generally not supported.[^4] If you have a retired Pixel 6 or 7, it's worth a try; for the typical drawer phone from 2018, it's not an option.
 
 It also inherits Android's background restrictions: the VM is tied to the Terminal app, which Android can and will stop.
 
 ## Option 3: Replace Android with Nura (formerly postmarketOS)
 
-**Nura** is a Linux distribution for phones and tablets built on Alpine Linux. Until September 2026 it was called **postmarketOS**; the project renamed itself at its first conference after an 18-month process, mostly because the old name was hard to pronounce, remember and trademark. The website moved to `nura.eco` and the old domain redirects there, but much of the tooling and documentation still uses the old name (the install tool is still `pmbootstrap`, the wiki still lives at `wiki.postmarketos.org`), so you'll see both for a while.
+**Nura** is a Linux distribution for phones and tablets built on Alpine Linux. Until September 2026 it was called **postmarketOS**; the project renamed itself at its first conference after an 18-month process, mostly because the old name was hard to pronounce, remember and trademark.[^5][^6] The website moved to `nura.eco` and the old domain redirects there, but much of the tooling and documentation still uses the old name (the install tool is still `pmbootstrap`, the wiki still lives at `wiki.postmarketos.org`), so you'll see both for a while.
 
 The project's goal since 2017 has been a ten-year lifecycle for phones. Instead of running a Linux userland on top of Android, it replaces Android entirely. On well-supported devices it runs a **mainline** Linux kernel, the same kernel source as your laptop, rather than the frozen vendor kernel the phone shipped with. That gives you everything Termux lacks:
 
@@ -132,13 +132,13 @@ The project's goal since 2017 has been a ten-year lifecycle for phones. Instead 
 - Alpine's `apk` package manager and repositories, plus Nura's own packages;
 - a firewall (nftables) enabled out of the box;
 - root, namespaces and cgroups, so Docker, Podman and k3s work;
-- regular security updates, with a stable release every six months (June and December, a month after Alpine's) or the rolling `edge` branch.
+- regular security updates, with a stable release every six months (June and December, a month after Alpine's) or the rolling `edge` branch.[^7]
 
-People run all sorts of things on these: Home Assistant, Jellyfin in a k3s cluster on a OnePlus 6T, and an offline Wi-Fi hotspot with a captive portal on a Pixel 3a XL that streamed 720p video to four devices at around 5% CPU and roughly 2.4 W.
+People run all sorts of things on these: Home Assistant, Jellyfin in a k3s cluster on a OnePlus 6T, and an offline Wi-Fi hotspot with a captive portal on a Pixel 3a XL that streamed 720p video to four devices at around 5% CPU and roughly 2.4 W.[^8][^9][^10]
 
 ### Choosing a phone
 
-Device support is the deciding factor, and it varies enormously. The wiki's [devices page](https://wiki.postmarketos.org/wiki/Devices) lists every port with a feature matrix, sorted into categories:
+Device support is the deciding factor, and it varies enormously. The wiki's [devices page](https://wiki.postmarketos.org/wiki/Devices) lists every port with a feature matrix, sorted into categories:[^11]
 
 - **main**: the best supported. Currently empty; the project removed the devices that used to be here and plans to readmit devices against a stricter standard.
 - **community**: maintained ports that get stable release images. **Pick one of these if you can.**
@@ -153,7 +153,7 @@ The most important prerequisite: **the bootloader must be unlockable**. Many car
 
 ### Installing
 
-There are two routes: download a prebuilt image from the website for your device and flash it, or build your own with **`pmbootstrap`**, the project's build and install tool. For a server, `pmbootstrap` is worth it because you can choose a console-only system with no graphical interface at all.
+There are two routes: download a prebuilt image from the website for your device and flash it, or build your own with **`pmbootstrap`**, the project's build and install tool.[^12] For a server, `pmbootstrap` is worth it because you can choose a console-only system with no graphical interface at all.
 
 `pmbootstrap` runs on any Linux machine (x86_64 or aarch64) and is available from PyPI and many distribution repositories:
 
@@ -273,7 +273,7 @@ Some ways to reduce the risk, from easiest to most involved:
      ls /sys/class/power_supply/*/ | grep -E 'charge_control|constant_charge'
      ```
 
-     If you see `charge_control_end_threshold` or `constant_charge_voltage_max`, you can lower it (and persist the setting with a boot script). If not, one person in early 2026 went further and changed the device tree on their postmarketOS phone to cap the maximum charge voltage at 3.8 V instead of 4.4 V, holding the battery at roughly 40–50%.
+     If you see `charge_control_end_threshold` or `constant_charge_voltage_max`, you can lower it (and persist the setting with a boot script). If not, one person in early 2026 went further and changed the device tree on their postmarketOS phone to cap the maximum charge voltage at 3.8 V instead of 4.4 V, holding the battery at roughly 40–50%.[^13]
    - Without any of that, use a **smart plug** controlled by Home Assistant or a cron job on another machine: switch the charger on at, say, 40% and off at 80%. The phone reports its battery level; the plug does the rest.
 4. **Remove the battery and power the phone directly.** For a phone that will never move again, this is the safest option, but it's real electronics work: phones generally won't boot from USB alone with the battery removed, so people feed a regulated supply into the battery connector or charge controller. Only do this if you know what you're doing.
 
@@ -308,19 +308,20 @@ Poor fits: anything that needs lots of storage (internal flash is small and not 
 - **Nura (formerly postmarketOS)** turns a supported phone into a proper Linux server with a mainline kernel, OpenRC or systemd, a firewall, containers and regular updates. Check the device list first and pick a community device with working Wi-Fi and charging.
 - **Take the battery seriously.** Inspect it, keep it cool, limit the charge level, and never leave a swollen battery plugged in.
 
-## Sources
+## Further reading
 
-- [postmarketOS v26.06 release](https://postmarketos.org/blog/2026/06/21/v26.06-release/), postmarketOS blog.
-- [postmarketOS announce rebrand to new, shorter name](https://www.omglinux.com/postmarketos-new-name/), OMG! Linux, on the rename to Nura.
-- [postmarketOS is now Nura after nearly a decade of bringing Linux to phones](https://www.notebookcheck.net/postmarketOS-is-now-Nura-after-nearly-a-decade-of-bringing-Linux-to-phones.1410027.0.html), Notebookcheck.
-- [Releases](https://docs.postmarketos.org/pmaports/main/releases.html), postmarketOS documentation: release schedule and support periods.
-- [Devices](https://wiki.postmarketos.org/wiki/Devices), postmarketOS wiki: device list, categories and feature matrix.
-- [pmbootstrap usage](https://docs.postmarketos.org/pmbootstrap/usage.html), pmbootstrap documentation.
-- [Android Virtualization Framework guide](https://cdn.jsdelivr.net/gh/ferrumclaudepilgrim/claude-code-android@main/docs/avf-guide.md), on the Terminal app's device requirements on Android 17.
-- [Andronix on Android 12 and beyond](https://docs.andronix.app/android-12/andronix-on-android-12-and-beyond), on the phantom process killer and how to disable it.
-- [proot-distro](https://github.com/termux/proot-distro), Termux.
-- [Limiting Battery Risk On Repurposed Smartphones With PostmarketOS](https://hackaday.com/2026/02/01/limiting-battery-risk-on-repurposed-smartphones-with-postmarketos), Hackaday.
-- [From Smartphone To A Home Server](https://hackaday.com/blog/page/564/?m=false), Hackaday, on Hardware Haven's Home Assistant phone server.
-- [I turned an old phone into a Linux homelab](https://dev.to/kamaaaal/i-turned-an-old-phone-into-a-linux-homelab-54cf), DEV Community: k3s and Jellyfin on a OnePlus 6T.
-- [Portable web server on a Pixel 3a XL](https://lemmy.world/comment/25920669), Lemmy: power and CPU figures for an offline media node.
 - [Linux mobile resources](https://linmob.net/resources/), LINMOB.net: overview of mainline-capable phones and distributions.
+
+[^1]: [postmarketOS v26.06 release](https://postmarketos.org/blog/2026/06/21/v26.06-release/), postmarketOS blog.
+[^2]: [Andronix on Android 12 and beyond](https://docs.andronix.app/android-12/andronix-on-android-12-and-beyond), on the phantom process killer and how to disable it.
+[^3]: [proot-distro](https://github.com/termux/proot-distro), Termux.
+[^4]: [Android Virtualization Framework guide](https://cdn.jsdelivr.net/gh/ferrumclaudepilgrim/claude-code-android@main/docs/avf-guide.md), on the Terminal app's device requirements on Android 17.
+[^5]: [postmarketOS announce rebrand to new, shorter name](https://www.omglinux.com/postmarketos-new-name/), OMG! Linux, on the rename to Nura.
+[^6]: [postmarketOS is now Nura after nearly a decade of bringing Linux to phones](https://www.notebookcheck.net/postmarketOS-is-now-Nura-after-nearly-a-decade-of-bringing-Linux-to-phones.1410027.0.html), Notebookcheck.
+[^7]: [Releases](https://docs.postmarketos.org/pmaports/main/releases.html), postmarketOS documentation: release schedule and support periods.
+[^8]: [From Smartphone To A Home Server](https://hackaday.com/blog/page/564/?m=false), Hackaday, on Hardware Haven's Home Assistant phone server.
+[^9]: [I turned an old phone into a Linux homelab](https://dev.to/kamaaaal/i-turned-an-old-phone-into-a-linux-homelab-54cf), DEV Community: k3s and Jellyfin on a OnePlus 6T.
+[^10]: [Portable web server on a Pixel 3a XL](https://lemmy.world/comment/25920669), Lemmy: power and CPU figures for an offline media node.
+[^11]: [Devices](https://wiki.postmarketos.org/wiki/Devices), postmarketOS wiki: device list, categories and feature matrix.
+[^12]: [pmbootstrap usage](https://docs.postmarketos.org/pmbootstrap/usage.html), pmbootstrap documentation.
+[^13]: [Limiting Battery Risk On Repurposed Smartphones With PostmarketOS](https://hackaday.com/2026/02/01/limiting-battery-risk-on-repurposed-smartphones-with-postmarketos), Hackaday.

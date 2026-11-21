@@ -4,7 +4,7 @@ date: 2026-11-16
 draft: true
 description: "How the Kubernetes API server decides whether a request is allowed: request attributes, the authorizer chain, RBAC, the Node authorizer, webhooks, structured authorization configuration, impersonation, kubelet authorization and the newest features in v1.36 and v1.37."
 summary: "Authentication tells Kubernetes who you are. Authorization decides what you may do. Here is how that decision is made, how to configure it, how to check it, and where it stops."
-tags: ["kubernetes", "security", "authorization", "rbac", "webhook", "impersonation"]
+tags: ["kubernetes", "security", "authorization", "rbac", "webhooks", "impersonation"]
 categories: ["Programming"]
 ---
 

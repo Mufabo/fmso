@@ -4,7 +4,7 @@ date: 2026-11-21
 draft: true
 description: "A practical introduction to Mage, the Make-style build tool where targets are plain Go functions: installation, writing a magefile, dependencies, namespaces, the sh helpers, CI usage and how it compares to Make."
 summary: "Mage replaces your Makefile with ordinary Go functions. No tabs, no shell quirks, works the same on Linux, macOS and Windows. Here is how to set it up, write targets with dependencies, and run it in CI."
-tags: ["go", "golang", "mage", "make", "build tools", "ci"]
+tags: ["go", "mage", "make", "build tools", "ci/cd"]
 categories: ["Programming"]
 ---
 

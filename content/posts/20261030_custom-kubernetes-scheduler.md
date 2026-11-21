@@ -4,7 +4,7 @@ date: 2026-10-30
 draft: true
 description: "When the default kube-scheduler stops being enough, what to try before writing code, and how to build, deploy and test your own scheduler plugin in Go."
 summary: "Most clusters never need a custom scheduler, but some do. How kube-scheduler makes decisions, when to extend it, and a complete walkthrough of building and running your own scheduler plugin."
-tags: ["kubernetes", "scheduler", "go", "golang", "platform engineering"]
+tags: ["kubernetes", "scheduler", "go", "platform engineering"]
 categories: ["Programming"]
 ---
 
@@ -84,7 +84,7 @@ All of that is what `kube-scheduler` gives you. That is the main lesson of this 
 
 ## How kube-scheduler makes decisions
 
-Since v1.19, `kube-scheduler` is built on the **scheduling framework**: a fixed pipeline of extension points, with every piece of scheduling logic implemented as a plugin that hooks into one or more of them. Even the built-in behaviour, such as resource fitting, node affinity and taints, is just a set of default plugins.
+Since v1.19, `kube-scheduler` is built on the **scheduling framework**: a fixed pipeline of extension points, with every piece of scheduling logic implemented as a plugin that hooks into one or more of them.[^1] Even the built-in behaviour, such as resource fitting, node affinity and taints, is just a set of default plugins.[^2]
 
 For each Pod, scheduling runs in two phases:
 
@@ -145,12 +145,12 @@ Before writing code, check whether the problem is already solved. Kubernetes has
 | GPUs and other devices | Dynamic Resource Allocation (DRA) |
 | A full batch/HPC scheduler | [Volcano](https://volcano.sh/) or [Apache YuniKorn](https://yunikorn.apache.org/) |
 
-The gang scheduling row deserves a note. Kubernetes v1.35 introduced a `Workload` API in alpha that lets you describe a group of Pods and give it a `gang` policy with a minimum count; the scheduler then holds the Pods until the whole group can be placed. In v1.37 the Workload and PodGroup APIs moved to beta (`scheduling.k8s.io/v1beta1`), along with workload-aware preemption. They are still disabled by default, so check whether your provider lets you turn them on. Many of the custom gang schedulers people built over the years can eventually be replaced by this.
+The gang scheduling row deserves a note. Kubernetes v1.35 introduced a `Workload` API in alpha that lets you describe a group of Pods and give it a `gang` policy with a minimum count; the scheduler then holds the Pods until the whole group can be placed.[^3] In v1.37 the Workload and PodGroup APIs moved to beta (`scheduling.k8s.io/v1beta1`), along with workload-aware preemption.[^4] They are still disabled by default, so check whether your provider lets you turn them on. Many of the custom gang schedulers people built over the years can eventually be replaced by this.
 
 ## Your options, from least to most effort
 
 1. **Reconfigure kube-scheduler** with a `KubeSchedulerConfiguration`: change weights, swap strategies, disable plugins, add profiles. No code.
-2. **Use an existing plugin** from [`kubernetes-sigs/scheduler-plugins`](https://github.com/kubernetes-sigs/scheduler-plugins). The project ships a ready-built `kube-scheduler` image that includes extra plugins such as Coscheduling, Capacity Scheduling, Node Resource Topology and Trimaran.
+2. **Use an existing plugin** from [`kubernetes-sigs/scheduler-plugins`](https://github.com/kubernetes-sigs/scheduler-plugins). The project ships a ready-built `kube-scheduler` image that includes extra plugins such as Coscheduling, Capacity Scheduling, Node Resource Topology and Trimaran.[^5]
 3. **Write your own plugin** in Go and compile it into a custom `kube-scheduler` binary. This is the recommended way to add new logic.
 4. **Write a scheduler extender**: an HTTP webhook that the scheduler calls during filtering, scoring, preemption or binding. It works with any language and doesn't require a rebuild, but every call is an HTTP round trip, it only reaches a few extension points, and it can't see the scheduler's internal state. The plugin framework was created largely to replace this approach.
 5. **Adopt or write a different scheduler** entirely. Volcano and YuniKorn are full alternatives. Writing your own from scratch is only reasonable for research.
@@ -219,7 +219,7 @@ cost-scheduler/
 
 ### The plugin
 
-In recent releases (v1.35 onwards) the plugin interfaces live in the published module `k8s.io/kube-scheduler/framework`, usually imported as `fwk`. Older tutorials import `k8s.io/kubernetes/pkg/scheduler/framework` and use slightly different signatures; this is the most common reason copied example code doesn't compile.
+In recent releases (v1.35 onwards) the plugin interfaces live in the published module `k8s.io/kube-scheduler/framework`, usually imported as `fwk`.[^6] Older tutorials import `k8s.io/kubernetes/pkg/scheduler/framework` and use slightly different signatures; this is the most common reason copied example code doesn't compile.
 
 ```go
 // pkg/nodecost/nodecost.go
@@ -439,7 +439,7 @@ Leader election lets you run two replicas safely: only the leader schedules, and
 
 ### Deploying it as a second scheduler
 
-The scheduler needs the same permissions as `kube-scheduler`. The simplest way is to bind your ServiceAccount to the built-in roles, as the official [multiple schedulers guide](https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/) does:
+The scheduler needs the same permissions as `kube-scheduler`. The simplest way is to bind your ServiceAccount to the built-in roles, as the official multiple schedulers guide does:[^7]
 
 ```yaml
 apiVersion: v1
@@ -516,7 +516,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-The official guide instead edits the `system:kube-scheduler` ClusterRole to add the new lock name. A separate Role does the same job without touching a built-in object that the API server may reconcile.
+The official guide instead edits the `system:kube-scheduler` ClusterRole to add the new lock name.[^7] A separate Role does the same job without touching a built-in object that the API server may reconcile.
 
 Then the ConfigMap and Deployment:
 
@@ -632,7 +632,7 @@ If the Pods sit in `Pending` with no events at all, the scheduler isn't picking 
 ### Testing beyond unit tests
 
 - **kind.** A local [kind](https://kind.sigs.k8s.io/) cluster with a few worker nodes is enough to test labels, filters and scores end to end. Load your image with `kind load docker-image`.
-- **The scheduler simulator.** [`kube-scheduler-simulator`](https://github.com/kubernetes-sigs/kube-scheduler-simulator) runs the scheduler against a fake cluster and shows each plugin's filter result and score for every node. It's the fastest way to understand why a Pod landed where it did.
+- **The scheduler simulator.** [`kube-scheduler-simulator`](https://github.com/kubernetes-sigs/kube-scheduler-simulator) runs the scheduler against a fake cluster and shows each plugin's filter result and score for every node.[^8] It's the fastest way to understand why a Pod landed where it did.
 - **Load.** Before production, test with as many nodes and pending Pods as your real cluster. A plugin that adds a millisecond per node is invisible in kind and painful at 5,000 nodes.
 
 ## What can go wrong
@@ -655,13 +655,11 @@ If the Pods sit in `Pending` with no events at all, the scheduler isn't picking 
 - **Prefer profiles in one scheduler over a second scheduler** whenever you control the control plane.
 - **Plan for operations**: high availability, metrics, autoscaler interaction and an upgrade for every Kubernetes release.
 
-## Sources
-
-- [Scheduler Configuration](https://kubernetes.io/docs/reference/scheduling/config/), Kubernetes documentation: extension points, default plugins, profiles and `multiPoint`.
-- [KEP-624: Scheduling Framework](https://www.kubernetes.dev/resources/keps/624/), the design of the plugin framework.
-- [Configure Multiple Schedulers](https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/), Kubernetes documentation.
-- [Kubernetes v1.35: Introducing Workload Aware Scheduling](https://kubernetes.io/blog/2025/12/29/kubernetes-v1-35-introducing-workload-aware-scheduling/), Kubernetes blog.
-- [Kubernetes v1.37: Advancing Workload-Aware Scheduling](https://kubernetes.io/blog/2026/09/08/kubernetes-v1-37-advancing-workload-aware-scheduling/), Kubernetes blog.
-- [kubernetes-sigs/scheduler-plugins](https://github.com/kubernetes-sigs/scheduler-plugins), out-of-tree plugins and ready-built images.
-- [kubernetes/kube-scheduler](https://github.com/kubernetes/kube-scheduler), the published module containing the configuration types and plugin framework interfaces.
-- [kube-scheduler-simulator](https://github.com/kubernetes-sigs/kube-scheduler-simulator), for visualising plugin decisions.
+[^1]: [KEP-624: Scheduling Framework](https://www.kubernetes.dev/resources/keps/624/), the design of the plugin framework.
+[^2]: [Scheduler Configuration](https://kubernetes.io/docs/reference/scheduling/config/), Kubernetes documentation: extension points, default plugins, profiles and `multiPoint`.
+[^3]: [Kubernetes v1.35: Introducing Workload Aware Scheduling](https://kubernetes.io/blog/2025/12/29/kubernetes-v1-35-introducing-workload-aware-scheduling/), Kubernetes blog.
+[^4]: [Kubernetes v1.37: Advancing Workload-Aware Scheduling](https://kubernetes.io/blog/2026/09/08/kubernetes-v1-37-advancing-workload-aware-scheduling/), Kubernetes blog.
+[^5]: [kubernetes-sigs/scheduler-plugins](https://github.com/kubernetes-sigs/scheduler-plugins), out-of-tree plugins and ready-built images.
+[^6]: [kubernetes/kube-scheduler](https://github.com/kubernetes/kube-scheduler), the published module containing the configuration types and plugin framework interfaces.
+[^7]: [Configure Multiple Schedulers](https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/), Kubernetes documentation.
+[^8]: [kube-scheduler-simulator](https://github.com/kubernetes-sigs/kube-scheduler-simulator), for visualising plugin decisions.

@@ -4,7 +4,7 @@ date: 2026-11-19
 draft: true
 description: "What Apache Artemis is now that it's an independent Apache project, how its addresses, queues, journal and HA work, and two ways to run it on Kubernetes: a plain StatefulSet with the official image, and the ArkMQ broker operator."
 summary: "Apache Artemis, formerly ActiveMQ Artemis, became its own top-level Apache project in late 2025. Here is a quick tour of how the broker works, followed by two ways to deploy it on Kubernetes: a hand-written StatefulSet for a single broker, and the ArkMQ operator for clusters."
-tags: ["kubernetes", "apache artemis", "activemq artemis", "messaging", "message broker", "operator", "statefulset"]
+tags: ["kubernetes", "activemq artemis", "messaging", "message broker", "operator", "statefulset"]
 categories: ["Programming"]
 ---
 

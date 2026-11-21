@@ -17,7 +17,7 @@ This post covers what TLS gives you, the building blocks it is made from, how th
 - **HTTPS**, where a browser that has never seen a server before has to decide whether to trust it.
 - **etcd**, where a small set of machines you control use **mutual TLS** to authenticate each other in both directions.
 
-Everything here is based on TLS 1.3 (RFC 8446), etcd 3.6/3.7 and Go 1.24+, current at the time of writing.
+Everything here is based on TLS 1.3 (RFC 8446), etcd 3.6/3.7 and Go 1.24+, current at the time of writing.[^1][^2]
 
 ## What TLS gives you
 
@@ -59,7 +59,7 @@ This is what **Diffie-Hellman** solves. Each side generates a random private val
 
 TLS 1.3 uses **ephemeral** Diffie-Hellman: fresh key pairs for every connection, thrown away afterwards. That gives **forward secrecy**: if a server's long-term private key is stolen next year, an attacker who recorded today's traffic still can't decrypt it, because the keys that protected it no longer exist anywhere. (TLS 1.2 also allowed RSA key exchange, which had no forward secrecy. TLS 1.3 removed it.)
 
-The classic choice is **X25519**, Diffie-Hellman on an elliptic curve. The current default in browsers and Go is the hybrid **X25519MLKEM768**: an X25519 exchange and an ML-KEM-768 exchange (a post-quantum algorithm standardised by NIST as FIPS 203) done side by side, with both results mixed into the key. The connection stays secure as long as *either* algorithm holds. The point is to stop "harvest now, decrypt later": an attacker recording traffic today in the hope of breaking it with a future quantum computer.
+The classic choice is **X25519**, Diffie-Hellman on an elliptic curve. The current default in browsers and Go is the hybrid **X25519MLKEM768**: an X25519 exchange and an ML-KEM-768 exchange (a post-quantum algorithm standardised by NIST as FIPS 203) done side by side, with both results mixed into the key.[^3] The connection stays secure as long as *either* algorithm holds. The point is to stop "harvest now, decrypt later": an attacker recording traffic today in the hope of breaking it with a future quantum computer.
 
 ### 3. Digital signatures: proving identity
 
@@ -186,7 +186,7 @@ The client does **not** present a certificate. The server authenticates the user
 
 What if a server's private key is stolen? The certificate can be revoked, but revocation checking on the web has always worked badly: online checks (OCSP) were slow, leaked your browsing to the CA, and browsers ignored failures anyway. Browsers have moved to pushing compressed revocation lists to clients instead (Chrome's CRLSets, Firefox's CRLite), and Let's Encrypt has dropped OCSP entirely.
 
-The industry's real answer is to make certificates expire quickly, so a stolen key is only useful for a short time. In April 2025 the CA/Browser Forum voted (ballot SC-081v3) to cut the maximum lifetime of public TLS certificates in stages: 200 days from March 2026, 100 days from March 2027, and 47 days from March 2029. Let's Encrypt is moving faster: from 90 days to 64 days in February 2027 and 45 days in February 2028, and it already offers six-day certificates. The practical consequence: **if certificate renewal on your public sites isn't fully automated (ACME), fix that now.**
+The industry's real answer is to make certificates expire quickly, so a stolen key is only useful for a short time. In April 2025 the CA/Browser Forum voted (ballot SC-081v3) to cut the maximum lifetime of public TLS certificates in stages: 200 days from March 2026, 100 days from March 2027, and 47 days from March 2029.[^4] Let's Encrypt is moving faster: from 90 days to 64 days in February 2027 and 45 days in February 2028, and it already offers six-day certificates.[^5] The practical consequence: **if certificate renewal on your public sites isn't fully automated (ACME), fix that now.**
 
 ### What's still visible
 
@@ -237,7 +237,7 @@ Each channel has its own set of flags, which is the first thing that confuses pe
 | CA to verify the other side's certificate | `--trusted-ca-file` | `--peer-trusted-ca-file` |
 | Self-signed certs, generated at startup | `--auto-tls` | `--peer-auto-tls` |
 
-Plus two flags that apply to both: `--tls-min-version` / `--tls-max-version` and `--cipher-suites`.
+Plus two flags that apply to both: `--tls-min-version` / `--tls-max-version` and `--cipher-suites`.[^6]
 
 ### Server TLS vs mutual TLS
 
@@ -344,7 +344,7 @@ If you build a cluster with kubeadm, all of this is done for you. Look in `/etc/
 | `peer.crt` | Used for member-to-member traffic (`--peer-cert-file`). |
 | `healthcheck-client.crt` | Used by the liveness probe to call etcd. |
 
-And in `/etc/kubernetes/pki/`, `apiserver-etcd-client.crt`, which the API server presents to etcd via `--etcd-certfile`, `--etcd-keyfile` and `--etcd-cafile`.
+And in `/etc/kubernetes/pki/`, `apiserver-etcd-client.crt`, which the API server presents to etcd via `--etcd-certfile`, `--etcd-keyfile` and `--etcd-cafile`.[^7]
 
 kubeadm certificates are valid for one year, and `kubeadm certs check-expiration` shows when each one expires. Upgrading the cluster renews them; clusters that are never upgraded have a famous habit of going down exactly one year after they were built.
 
@@ -417,12 +417,10 @@ Look for `Verify return code: 0 (ok)`, the negotiated protocol and cipher, and t
 - **HTTPS trusts the public CA system** and authenticates only the server. Certificate lifetimes are shrinking fast, so automate renewal.
 - **etcd trusts a private CA** and uses mutual TLS on two channels, client and peer. Use `https://` everywhere, turn on `--client-cert-auth` and `--peer-client-cert-auth`, get the SANs right, require TLS 1.3, and keep an eye on expiry dates.
 
-## Sources
-
-- [RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3](https://www.rfc-editor.org/rfc/rfc8446), IETF.
-- [Transport security model](https://etcd.io/docs/v3.6/op-guide/security/), etcd documentation: TLS flags, client and peer certificates, and examples.
-- [Announcing etcd v3.7](https://etcd.io/blog/2026/announcing-etcd-3.7/), etcd blog.
-- [PKI certificates and requirements](https://kubernetes.io/docs/setup/best-practices/certificates/), Kubernetes documentation: the certificates kubeadm generates for etcd and the API server.
-- [Go 1.24 release notes: crypto/tls](https://go.dev/doc/go1.24#cryptotlspkgcryptotls), on `X25519MLKEM768` becoming the default.
-- [Ballot SC-081v3: Introduce Schedule of Reducing Validity and Data Reuse Periods](https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/), CA/Browser Forum.
-- [Profiles](https://letsencrypt.org/docs/profiles/), Let's Encrypt documentation: certificate profiles, including six-day certificates.
+[^1]: [RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3](https://www.rfc-editor.org/rfc/rfc8446), IETF.
+[^2]: [Announcing etcd v3.7](https://etcd.io/blog/2026/announcing-etcd-3.7/), etcd blog.
+[^3]: [Go 1.24 release notes: crypto/tls](https://go.dev/doc/go1.24#cryptotlspkgcryptotls), on `X25519MLKEM768` becoming the default.
+[^4]: [Ballot SC-081v3: Introduce Schedule of Reducing Validity and Data Reuse Periods](https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/), CA/Browser Forum.
+[^5]: [Profiles](https://letsencrypt.org/docs/profiles/), Let's Encrypt documentation: certificate profiles, including six-day certificates.
+[^6]: [Transport security model](https://etcd.io/docs/v3.6/op-guide/security/), etcd documentation: TLS flags, client and peer certificates, and examples.
+[^7]: [PKI certificates and requirements](https://kubernetes.io/docs/setup/best-practices/certificates/), Kubernetes documentation: the certificates kubeadm generates for etcd and the API server.

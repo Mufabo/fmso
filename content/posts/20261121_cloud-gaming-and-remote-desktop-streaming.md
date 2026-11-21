@@ -4,7 +4,7 @@ date: 2026-11-21
 draft: true
 description: "How cloud gaming and low-latency remote desktop streaming work, what changed in 2026 (hour caps on GeForce NOW, Xbox Cloud Gaming and Shadow), and how to self-host your own game streaming with Steam Remote Play, Sunshine and Moonlight, Apollo, Parsec or Wolf in containers."
 summary: "Cloud gaming spent 2026 putting a meter on the clock: GeForce NOW, Xbox Cloud Gaming and Shadow all introduced hour caps. Meanwhile, self-hosted streaming with Sunshine, Moonlight and friends has never been better. Here is how game streaming works under the hood, what the commercial services offer now, and how to turn your own PC into a private cloud gaming server."
-tags: ["cloud gaming", "game streaming", "remote desktop", "sunshine", "moonlight", "parsec", "geforce now", "xbox cloud gaming", "self-hosted", "docker", "linux"]
+tags: ["cloud gaming", "game streaming", "remote desktop", "sunshine", "moonlight", "parsec", "geforce now", "xbox cloud gaming", "self-hosting", "docker", "linux"]
 categories: ["Infrastructure"]
 ---
 

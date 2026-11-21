@@ -12,7 +12,7 @@ Every container in Kubernetes is supposed to say how much CPU and memory it need
 
 This post covers what VPA is, why it is needed, what it does, how it does it, and where it fits next to the other autoscalers.
 
-Everything here is based on Kubernetes v1.37 and VPA 1.8, the current releases at the time of writing.
+Everything here is based on Kubernetes v1.37 and VPA 1.8, the current releases at the time of writing.[^1]
 
 ## Horizontal vs vertical scaling
 
@@ -37,7 +37,7 @@ resources:
 ```
 
 - **Requests** are what the scheduler uses. A Pod is only placed on a node with enough *unrequested* capacity. Once placed, the request is reserved for that Pod whether it uses it or not. The CPU request also sets the container's share of CPU when the node is busy.
-- **Limits** are enforced at runtime. A container that goes over its CPU limit is throttled. A container that goes over its memory limit is killed (OOMKilled).
+- **Limits** are enforced at runtime. A container that goes over its CPU limit is throttled. A container that goes over its memory limit is killed (OOMKilled).[^2]
 
 So requests decide how many Pods fit on a node, and therefore how many nodes you pay for. Getting them wrong hurts in both directions:
 
@@ -109,7 +109,7 @@ With `updateMode: "Off"`, that's all VPA does: it recommends and you decide. Wit
 
 ## How VPA works
 
-VPA is not built into Kubernetes. It is a separate project in the [`kubernetes/autoscaler`](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) repository that you install into your cluster (many managed services, such as GKE and EKS, offer it as an add-on or ship their own implementation of the same API). It consists of a CustomResourceDefinition plus three components, each with one job:
+VPA is not built into Kubernetes. It is a separate project in the [`kubernetes/autoscaler`](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) repository that you install into your cluster (many managed services, such as GKE and EKS, offer it as an add-on or ship their own implementation of the same API). It consists of a CustomResourceDefinition plus three components, each with one job:[^3]
 
 ```text
           metrics-server                        VerticalPodAutoscaler
@@ -244,7 +244,7 @@ Eviction works, but it means a restart: connections are dropped, caches are cold
 
 For most of Kubernetes' life, a Pod's resources were immutable. The only way to change them was to delete the Pod and create a new one.
 
-That changed with **in-place Pod resize** (KEP-1287), which went alpha in Kubernetes v1.27, beta (enabled by default) in v1.33, and [stable in v1.35](https://kubernetes.io/blog/2025/12/19/kubernetes-v1-35-in-place-pod-resize-ga/). CPU and memory requests and limits can now be changed on a running Pod through its `resize` subresource. The kubelet adjusts the container's cgroup, usually without restarting the container. The Pod's status shows what was actually applied, and two conditions, `PodResizePending` and `PodResizeInProgress`, report progress. If the node doesn't have room, the resize is marked `Deferred` (and retried later) or `Infeasible`.
+That changed with **in-place Pod resize** (KEP-1287), which went alpha in Kubernetes v1.27, beta (enabled by default) in v1.33, and stable in v1.35.[^4] CPU and memory requests and limits can now be changed on a running Pod through its `resize` subresource.[^5] The kubelet adjusts the container's cgroup, usually without restarting the container. The Pod's status shows what was actually applied, and two conditions, `PodResizePending` and `PodResizeInProgress`, report progress. If the node doesn't have room, the resize is marked `Deferred` (and retried later) or `Infeasible`.
 
 VPA builds on this with new update modes, which brings us to the full list.
 
@@ -258,8 +258,8 @@ The mode is set in `spec.updatePolicy.updateMode`:
 | `Initial` | Get the recommendation | Never changed | Good for workloads that must not be disrupted, combined with regular deploys. |
 | `Recreate` | Get the recommendation | Evicted and recreated when the change is big enough | The classic behaviour, and the default if you don't set a mode. |
 | `InPlaceOrRecreate` | Get the recommendation | Resized in place; evicted only if the resize can't be done | Beta. Needs in-place resize in the cluster (v1.33+). |
-| `InPlace` | Get the recommendation | Resized in place only; never evicted | Alpha since VPA 1.7, behind the `InPlace` feature gate on the updater and admission controller. |
-| `Auto` | | | Deprecated since VPA 1.4. Currently an alias for `Recreate`. |
+| `InPlace` | Get the recommendation | Resized in place only; never evicted | Alpha since VPA 1.7, behind the `InPlace` feature gate on the updater and admission controller.[^1] |
+| `Auto` | | | Deprecated since VPA 1.4. Currently an alias for `Recreate`.[^6] |
 
 `Off` deserves a closer look, because it's where most people start. In `kubectl describe vpa` it shows up as `Update Policy: Update Mode: Off`. Only the recommender does any work in this mode: it keeps collecting usage and keeps the lower bound, target and upper bound in the VPA's status up to date. The admission controller lets new Pods through with whatever requests the workload template says, and the updater never evicts or resizes a running Pod. VPA watches and advises; you read the recommendation and decide whether to copy it into your manifests. Switching to another mode later is a one-line change, and the history the recommender has built up carries over, so VPA starts acting on a well-informed recommendation straight away.
 
@@ -334,7 +334,7 @@ Two other per-VPA settings were added recently: you can set how soon after an OO
 
 ## Getting started
 
-You need `metrics-server` (or another implementation of the Metrics API) running in the cluster. Then install VPA, either from your provider's add-on, from the official Helm chart in the autoscaler repository, or with the install script:
+You need `metrics-server` (or another implementation of the Metrics API) running in the cluster. Then install VPA, either from your provider's add-on, from the official Helm chart in the autoscaler repository, or with the install script:[^7]
 
 ```bash
 git clone https://github.com/kubernetes/autoscaler.git
@@ -374,12 +374,10 @@ Then adopt it gradually:
 - **In-place resize changed the trade-off.** With Kubernetes v1.35+ and the `InPlaceOrRecreate` mode, VPA can usually resize running Pods without restarting them, which removes the biggest reason people kept it switched off.
 - **Start in `Off` mode, set bounds, and keep VPA and HPA off each other's resources.**
 
-## Sources
-
-- [Vertical Pod Autoscaling](https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/), Kubernetes documentation: architecture, update modes and resource policies.
-- [Vertical Pod Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler), project README, [quick start](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md) and [API reference](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/api.md).
-- [VPA release notes](https://github.com/kubernetes/autoscaler/releases), including [1.7.0](https://github.com/kubernetes/autoscaler/releases/tag/vertical-pod-autoscaler-1.7.0) (`InPlace` mode) and [1.8.0](https://github.com/kubernetes/autoscaler/releases/tag/vertical-pod-autoscaler-1.8.0).
-- [Deprecate UpdateMode Auto](https://github.com/kubernetes/autoscaler/pull/8426), the pull request that deprecated `Auto` and made `Recreate` the default.
-- [Kubernetes v1.35: In-Place Pod Resize Graduates to Stable](https://kubernetes.io/blog/2025/12/19/kubernetes-v1-35-in-place-pod-resize-ga/), Kubernetes blog.
-- [Resize CPU and Memory Resources assigned to Containers](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/), Kubernetes documentation.
-- [Resource Management for Pods and Containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/), Kubernetes documentation: how requests and limits are used.
+[^1]: [VPA release notes](https://github.com/kubernetes/autoscaler/releases), including [1.7.0](https://github.com/kubernetes/autoscaler/releases/tag/vertical-pod-autoscaler-1.7.0) (`InPlace` mode) and [1.8.0](https://github.com/kubernetes/autoscaler/releases/tag/vertical-pod-autoscaler-1.8.0).
+[^2]: [Resource Management for Pods and Containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/), Kubernetes documentation: how requests and limits are used.
+[^3]: [Vertical Pod Autoscaling](https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/), Kubernetes documentation: architecture, update modes and resource policies.
+[^4]: [Kubernetes v1.35: In-Place Pod Resize Graduates to Stable](https://kubernetes.io/blog/2025/12/19/kubernetes-v1-35-in-place-pod-resize-ga/), Kubernetes blog.
+[^5]: [Resize CPU and Memory Resources assigned to Containers](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/), Kubernetes documentation.
+[^6]: [Deprecate UpdateMode Auto](https://github.com/kubernetes/autoscaler/pull/8426), the pull request that deprecated `Auto` and made `Recreate` the default.
+[^7]: [Vertical Pod Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler), project README, [quick start](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md) and [API reference](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/api.md).

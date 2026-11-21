@@ -8,7 +8,7 @@ tags: ["memory", "mnemonics", "method of loci", "cognition", "brain health", "da
 categories: ["Health"]
 ---
 
-The people who win memory championships are not unusually intelligent, and their brains don't look structurally different from anyone else's. When researchers put ten of them in a brain scanner, they scored about the same as matched controls on tests of general cognitive ability. What set them apart was a strategy: nine of the ten said they used a technique invented roughly 2,500 years ago, and their brains lit up in regions used for spatial navigation while they memorised (Maguire et al., 2003).
+The people who win memory championships are not unusually intelligent, and their brains don't look structurally different from anyone else's. When researchers put ten of them in a brain scanner, they scored about the same as matched controls on tests of general cognitive ability. What set them apart was a strategy: nine of the ten said they used a technique invented roughly 2,500 years ago, and their brains lit up in regions used for spatial navigation while they memorised.[^1]
 
 That technique is the method of loci, also called the memory palace. This post covers what it is, how well it works, what it does to the brain, and the question that matters most if you're thinking of practising it: does getting better at it make you better at anything else?
 
@@ -41,7 +41,7 @@ Why does it work so well? One explanation, from Martin Dresler, whose lab has st
 
 ## Building a memory palace from a Dark Souls speedrun
 
-The traditional advice is to use a place you know intimately, such as your childhood home. But your route doesn't have to be a physical place. In one study, 142 students explored a simple virtual building on a computer for just five minutes and then used it as their memory palace. They recalled about as well as students using a familiar real-world route, and both groups beat uninstructed controls by about 10–16% (Legge et al., 2012).
+The traditional advice is to use a place you know intimately, such as your childhood home. But your route doesn't have to be a physical place. In one study, 142 students explored a simple virtual building on a computer for just five minutes and then used it as their memory palace. They recalled about as well as students using a familiar real-world route, and both groups beat uninstructed controls by about 10–16%.[^2]
 
 If a five-minute virtual walk works, a game world you've spent hundreds of hours in should work at least as well. Dark Souls is close to ideal for three reasons:
 
@@ -57,7 +57,7 @@ Here's the current Dark Souls Remastered Any% Glitchless world record by m3dic, 
 
 ### The route
 
-The world-record route starts with a Hunter carrying the Master Key, kills the Asylum Demon with a longsword and heads to Firelink Shrine to pick up humanity and firebombs before going down towards New Londo (SoulsSpeedruns, n.d.). From that opening, we can take ten loci:
+The world-record route starts with a Hunter carrying the Master Key, kills the Asylum Demon with a longsword and heads to Firelink Shrine to pick up humanity and firebombs before going down towards New Londo.[^3] From that opening, we can take ten loci:
 
 | # | Locus | What's there |
 | --- | --- | --- |
@@ -95,40 +95,40 @@ Now close your eyes and run the route. Wake up in the cell, look up at the ceili
 
 Yes, by a substantial amount, at least for the kind of material it's designed for.
 
-**The meta-analyses.** A 2021 meta-analysis pooled 13 randomised controlled trials, mostly with university students, and found a medium-sized benefit for recall (Hedges' g = 0.65, 95% CI 0.45–0.85). The result held up after adjusting for publication bias and removing individual studies (Twomey & Kroneisen, 2021). A larger systematic review in 2025 found an even bigger effect on immediate serial recall compared with simple rehearsal (d = 0.88, 95% CI 0.47–1.25), but rated the risk of bias in many of the included trials as high (Ondřej, 2025). The direction is clear; the exact size under everyday conditions is less certain.
+**The meta-analyses.** A 2021 meta-analysis pooled 13 randomised controlled trials, mostly with university students, and found a medium-sized benefit for recall (Hedges' g = 0.65, 95% CI 0.45–0.85). The result held up after adjusting for publication bias and removing individual studies.[^4] A larger systematic review in 2025 found an even bigger effect on immediate serial recall compared with simple rehearsal (d = 0.88, 95% CI 0.47–1.25), but rated the risk of bias in many of the included trials as high.[^5] The direction is clear; the exact size under everyday conditions is less certain.
 
-**Ordinary people can learn it.** In the best-known training study, researchers compared 23 of the world's top memory athletes with matched controls, then trained 51 young men with no mnemonic experience (Dresler et al., 2017). They were randomly assigned to six weeks of method of loci training (40 half-hour sessions), six weeks of working-memory training, or no training.
+**Ordinary people can learn it.** In the best-known training study, researchers compared 23 of the world's top memory athletes with matched controls, then trained 51 young men with no mnemonic experience.[^6] They were randomly assigned to six weeks of method of loci training (40 half-hour sessions), six weeks of working-memory training, or no training.
 
 - Before training, participants recalled roughly 26–30 words from a 72-word list.
 - After six weeks, the loci group roughly doubled that, approaching the level of the memory athletes.
 - Four months later, without further training, they were still performing at a similar level.
 - The working-memory and no-training groups showed no comparable gains.
 
-**The memories last.** Memory competitions test recall minutes after study, which leaves open whether the method produces lasting memories or just short-lived ones. A reanalysis of the same training study separated "weak" memories, recalled after 20 minutes but forgotten by the next day, from "durable" ones, still there 24 hours later (Wagner et al., 2021). Loci training increased durable memories, not weak ones, and better performance after four months was partly associated with the training.
+**The memories last.** Memory competitions test recall minutes after study, which leaves open whether the method produces lasting memories or just short-lived ones. A reanalysis of the same training study separated "weak" memories, recalled after 20 minutes but forgotten by the next day, from "durable" ones, still there 24 hours later.[^7] Loci training increased durable memories, not weak ones, and better performance after four months was partly associated with the training.
 
-**It works in older adults too, with a big catch.** Healthy middle-aged and older adults trained in the method improve their memory (Engvig et al., 2010). But using it takes effort. In the large ACTIVE trial of older adults, many participants trained in mnemonics found it hard to keep using the method of loci under time pressure, and only about a quarter made an effort to use it in follow-up sessions over five years (Gross et al., 2014). A technique you stop using can't help you.
+**It works in older adults too, with a big catch.** Healthy middle-aged and older adults trained in the method improve their memory.[^8] But using it takes effort. In the large ACTIVE trial of older adults, many participants trained in mnemonics found it hard to keep using the method of loci under time pressure, and only about a quarter made an effort to use it in follow-up sessions over five years.[^9] A technique you stop using can't help you.
 
 ## What does it do to the brain?
 
 This is where the method gets interesting, and where claims about "brain health" need care.
 
-**Network changes, not bigger brain regions.** Memory athletes' brains didn't differ structurally from controls in either the 2003 or 2017 studies. The differences were in functional connectivity: how strongly brain regions coordinate their activity at rest. In Dresler's study, six weeks of loci training shifted participants' connectivity patterns towards those that distinguish memory athletes from everyone else, and the closer the resemblance, the better their memory four months later (Dresler et al., 2017). Neither control group showed this shift.
+**Network changes, not bigger brain regions.** Memory athletes' brains didn't differ structurally from controls in either the 2003 or 2017 studies. The differences were in functional connectivity: how strongly brain regions coordinate their activity at rest. In Dresler's study, six weeks of loci training shifted participants' connectivity patterns towards those that distinguish memory athletes from everyone else, and the closer the resemblance, the better their memory four months later.[^6] Neither control group showed this shift.
 
-**More efficient processing.** You might expect better memory to come with more brain activity. The opposite happened: after training, people showed less activation in several regions during learning, a pattern also seen in memory athletes. The researchers interpret this as neural efficiency. Trained participants also showed stronger coupling between the hippocampus and neocortex after learning, during the period when memories are being consolidated, and this was stronger in people who formed more durable memories (Wagner et al., 2021).
+**More efficient processing.** You might expect better memory to come with more brain activity. The opposite happened: after training, people showed less activation in several regions during learning, a pattern also seen in memory athletes. The researchers interpret this as neural efficiency. Trained participants also showed stronger coupling between the hippocampus and neocortex after learning, during the period when memories are being consolidated, and this was stronger in people who formed more durable memories.[^7]
 
-**Cortical thickness in older adults.** In a Norwegian study, middle-aged and older adults who did eight weeks of loci training showed regional increases in cortical thickness compared with untrained controls (Engvig et al., 2010). Thickening in the right fusiform and lateral orbitofrontal cortex correlated with how much their memory improved. The authors noted that this was a short-term study and couldn't show whether training changes the long-term trajectory of the ageing brain.
+**Cortical thickness in older adults.** In a Norwegian study, middle-aged and older adults who did eight weeks of loci training showed regional increases in cortical thickness compared with untrained controls.[^8] Thickening in the right fusiform and lateral orbitofrontal cortex correlated with how much their memory improved. The authors noted that this was a short-term study and couldn't show whether training changes the long-term trajectory of the ageing brain.
 
 ### Is that "brain health"?
 
 Not in the sense of protecting against decline or dementia, at least not yet. These studies show that the brain reorganises as you learn a demanding skill, which is what you'd expect from any intensive learning. None measured long-term decline.
 
-The best long-term evidence comes from the ACTIVE trial, which randomised 2,832 older adults to ten sessions of memory training (mnemonic strategies for lists and text), reasoning training, speed training or no training (Rebok et al., 2014). After ten years:
+The best long-term evidence comes from the ACTIVE trial, which randomised 2,832 older adults to ten sessions of memory training (mnemonic strategies for lists and text), reasoning training, speed training or no training.[^10] After ten years:
 
 - Reasoning and speed training still improved their target abilities.
 - **Memory training effects on memory performance were no longer detectable.**
 - All three training groups, including memory, reported less difficulty with everyday activities than controls.
 
-A 20-year follow-up linked to Medicare records found lower dementia diagnoses after speed training with booster sessions, but not significantly after memory training (Coe et al., 2026; covered in more detail in my [cognitive health guide](/posts/20261101_cognitive-health-guide/)). Even Dresler doubted that loci training would do much better or worse than other cognitive training regimes at preventing decline.
+A 20-year follow-up linked to Medicare records found lower dementia diagnoses after speed training with booster sessions, but not significantly after memory training (covered in more detail in my [cognitive health guide](/posts/20261101_cognitive-health-guide/)).[^11] Even Dresler doubted that loci training would do much better or worse than other cognitive training regimes at preventing decline.
 
 ## Does it transfer?
 
@@ -138,9 +138,9 @@ Transfer is the question of whether practising one skill improves another. Resea
 
 **Far transfer is not.** Several lines of evidence point the same way:
 
-- **Memory champions aren't smarter.** Their general cognitive ability matched controls; their advantage was strategy (Maguire et al., 2003). Memory athletes are as prone as anyone to forgetting their keys.
+- **Memory champions aren't smarter.** Their general cognitive ability matched controls; their advantage was strategy.[^1] Memory athletes are as prone as anyone to forgetting their keys.
 - **The skill stays in its lane.** In Dresler's study, the brain and memory gains appeared only in the loci group, not in the group that spent the same six weeks on a working-memory task.
-- **Cognitive training in general rarely transfers.** A second-order meta-analysis, pooling many meta-analyses of working-memory training, music, chess, video games and exergames, found that training reliably improves the trained task and similar ones, but that far-transfer effects were small or null across populations and programmes (Sala et al., 2019). The authors later argued that the overall far-transfer effect across the field is essentially zero once study quality and sampling error are accounted for (Gobet & Sala, 2023).
+- **Cognitive training in general rarely transfers.** A second-order meta-analysis, pooling many meta-analyses of working-memory training, music, chess, video games and exergames, found that training reliably improves the trained task and similar ones, but that far-transfer effects were small or null across populations and programmes.[^12] The authors later argued that the overall far-transfer effect across the field is essentially zero once study quality and sampling error are accounted for.[^13]
 
 Mnemonics are best understood as a tool, like a calculator for memory. A tool that works on any list is valuable. But practising with it doesn't upgrade the underlying hardware in a way that shows up elsewhere.
 
@@ -166,18 +166,16 @@ There's one more limit worth naming. The method of loci is excellent for arbitra
 
 If you want to try it, start small. Pick a route you know as well as the opening of a Dark Souls speedrun, use it for ten items this week, and see how many you can still recall next week.
 
-## References
-
-1. Coe, N. B., Miller, K. E. M., Sun, C., et al. (2026). [Impact of cognitive training on claims-based diagnosed dementia over 20 years: evidence from the ACTIVE study](https://doi.org/10.1002/trc2.70197). *Alzheimer's & Dementia: Translational Research & Clinical Interventions*, 12, e70197.
-2. Dresler, M., Shirer, W. R., Konrad, B. N., Müller, N. C. J., Wagner, I. C., Fernández, G., Czisch, M., & Greicius, M. D. (2017). [Mnemonic training reshapes brain networks to support superior memory](https://doi.org/10.1016/j.neuron.2017.02.003). *Neuron*, 93(5), 1227–1235.
-3. Engvig, A., Fjell, A. M., Westlye, L. T., Moberget, T., Sundseth, Ø., Larsen, V. A., & Walhovd, K. B. (2010). [Effects of memory training on cortical thickness in the elderly](https://doi.org/10.1016/j.neuroimage.2010.05.041). *NeuroImage*, 52(4), 1667–1676.
-4. Gobet, F., & Sala, G. (2023). [Cognitive training: a field in search of a phenomenon](https://researchonline.lse.ac.uk/id/eprint/113888). *Perspectives on Psychological Science*, 18(1), 125–141.
-5. Gross, A. L., Brandt, J., Bandeen-Roche, K., Carlson, M. C., Stuart, E. A., Marsiske, M., & Rebok, G. W. (2014). [Do older adults use the method of loci? Results from the ACTIVE study](https://pmc.ncbi.nlm.nih.gov/articles/PMC3955885/). *Experimental Aging Research*, 40(2), 140–163.
-6. Legge, E. L. G., Madan, C. R., Ng, E. T., & Caplan, J. B. (2012). [Building a memory palace in minutes: equivalent memory performance using virtual versus conventional environments with the Method of Loci](https://doi.org/10.1016/j.actpsy.2012.09.002). *Acta Psychologica*, 141(3), 380–390.
-7. Maguire, E. A., Valentine, E. R., Wilding, J. M., & Kapur, N. (2003). [Routes to remembering: the brains behind superior memory](https://doi.org/10.1038/nn988). *Nature Neuroscience*, 6(1), 90–95.
-8. Ondřej, J. (2025). [The method of loci in the context of psychological research: a systematic review and meta-analysis](https://doi.org/10.1111/bjop.12799). *British Journal of Psychology*, 116(4), 930–986.
-9. Rebok, G. W., Ball, K., Guey, L. T., Jones, R. N., Kim, H.-Y., King, J. W., et al. (2014). [Ten-year effects of the Advanced Cognitive Training for Independent and Vital Elderly cognitive training trial on cognition and everyday functioning in older adults](https://doi.org/10.1111/jgs.12607). *Journal of the American Geriatrics Society*, 62(1), 16–24.
-10. Sala, G., Aksayli, N. D., Tatlidil, K. S., Tatsumi, T., Gondo, Y., & Gobet, F. (2019). [Near and far transfer in cognitive training: a second-order meta-analysis](https://livrepository.liverpool.ac.uk/3043493/). *Collabra: Psychology*, 5(1), 18.
-11. SoulsSpeedruns. (n.d.). [Any% Glitchless route notes (Dark Souls Remastered)](https://soulsspeedruns.com/ds1remaster/any-glitchless-notes). SoulsSpeedruns Wiki. World record video: [m3dic, 44:40 IGT](https://youtu.be/mVoS9mI0pYM).
-12. Twomey, C., & Kroneisen, M. (2021). [The effectiveness of the loci method as a mnemonic device: meta-analysis](https://doi.org/10.1177/1747021821993457). *Quarterly Journal of Experimental Psychology*, 74(8), 1317–1326.
-13. Wagner, I. C., Konrad, B. N., Schuster, P., Weisig, S., Repantis, D., Ohla, K., Kühn, S., Fernández, G., Steiger, A., Lamm, C., Czisch, M., & Dresler, M. (2021). [Durable memories and efficient neural coding through mnemonic training using the method of loci](https://doi.org/10.1126/sciadv.abc7606). *Science Advances*, 7(10), eabc7606.
+[^1]: Maguire, E. A., Valentine, E. R., Wilding, J. M., & Kapur, N. (2003). [Routes to remembering: the brains behind superior memory](https://doi.org/10.1038/nn988). *Nature Neuroscience*, 6(1), 90–95.
+[^2]: Legge, E. L. G., Madan, C. R., Ng, E. T., & Caplan, J. B. (2012). [Building a memory palace in minutes: equivalent memory performance using virtual versus conventional environments with the Method of Loci](https://doi.org/10.1016/j.actpsy.2012.09.002). *Acta Psychologica*, 141(3), 380–390.
+[^3]: SoulsSpeedruns. (n.d.). [Any% Glitchless route notes (Dark Souls Remastered)](https://soulsspeedruns.com/ds1remaster/any-glitchless-notes). SoulsSpeedruns Wiki. World record video: [m3dic, 44:40 IGT](https://youtu.be/mVoS9mI0pYM).
+[^4]: Twomey, C., & Kroneisen, M. (2021). [The effectiveness of the loci method as a mnemonic device: meta-analysis](https://doi.org/10.1177/1747021821993457). *Quarterly Journal of Experimental Psychology*, 74(8), 1317–1326.
+[^5]: Ondřej, J. (2025). [The method of loci in the context of psychological research: a systematic review and meta-analysis](https://doi.org/10.1111/bjop.12799). *British Journal of Psychology*, 116(4), 930–986.
+[^6]: Dresler, M., Shirer, W. R., Konrad, B. N., Müller, N. C. J., Wagner, I. C., Fernández, G., Czisch, M., & Greicius, M. D. (2017). [Mnemonic training reshapes brain networks to support superior memory](https://doi.org/10.1016/j.neuron.2017.02.003). *Neuron*, 93(5), 1227–1235.
+[^7]: Wagner, I. C., Konrad, B. N., Schuster, P., Weisig, S., Repantis, D., Ohla, K., Kühn, S., Fernández, G., Steiger, A., Lamm, C., Czisch, M., & Dresler, M. (2021). [Durable memories and efficient neural coding through mnemonic training using the method of loci](https://doi.org/10.1126/sciadv.abc7606). *Science Advances*, 7(10), eabc7606.
+[^8]: Engvig, A., Fjell, A. M., Westlye, L. T., Moberget, T., Sundseth, Ø., Larsen, V. A., & Walhovd, K. B. (2010). [Effects of memory training on cortical thickness in the elderly](https://doi.org/10.1016/j.neuroimage.2010.05.041). *NeuroImage*, 52(4), 1667–1676.
+[^9]: Gross, A. L., Brandt, J., Bandeen-Roche, K., Carlson, M. C., Stuart, E. A., Marsiske, M., & Rebok, G. W. (2014). [Do older adults use the method of loci? Results from the ACTIVE study](https://pmc.ncbi.nlm.nih.gov/articles/PMC3955885/). *Experimental Aging Research*, 40(2), 140–163.
+[^10]: Rebok, G. W., Ball, K., Guey, L. T., Jones, R. N., Kim, H.-Y., King, J. W., et al. (2014). [Ten-year effects of the Advanced Cognitive Training for Independent and Vital Elderly cognitive training trial on cognition and everyday functioning in older adults](https://doi.org/10.1111/jgs.12607). *Journal of the American Geriatrics Society*, 62(1), 16–24.
+[^11]: Coe, N. B., Miller, K. E. M., Sun, C., et al. (2026). [Impact of cognitive training on claims-based diagnosed dementia over 20 years: evidence from the ACTIVE study](https://doi.org/10.1002/trc2.70197). *Alzheimer's & Dementia: Translational Research & Clinical Interventions*, 12, e70197.
+[^12]: Sala, G., Aksayli, N. D., Tatlidil, K. S., Tatsumi, T., Gondo, Y., & Gobet, F. (2019). [Near and far transfer in cognitive training: a second-order meta-analysis](https://livrepository.liverpool.ac.uk/3043493/). *Collabra: Psychology*, 5(1), 18.
+[^13]: Gobet, F., & Sala, G. (2023). [Cognitive training: a field in search of a phenomenon](https://researchonline.lse.ac.uk/id/eprint/113888). *Perspectives on Psychological Science*, 18(1), 125–141.
