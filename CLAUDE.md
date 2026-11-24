@@ -18,11 +18,11 @@ This project holds my private blog posts, published with Hugo. The individual po
 
 ## Site
 
-A personal Hugo blog deployed to `https://fatih.macht.sachen.online/` via Codeberg Pages. Design constraints are deliberate: **no JavaScript, no webfonts, no trackers**. Serif for prose, monospace for "machine facts" (dates, tags, code), dark mode via `prefers-color-scheme` only. Keep changes within these constraints.
+A personal Hugo blog deployed to `https://fatihs-ai-dumping-ground.duckdns.org/` via GitHub Pages (repo `Mufabo/fmso`). Design constraints are deliberate: **no JavaScript, no webfonts, no trackers**. Serif for prose, monospace for "machine facts" (dates, tags, code), dark mode via `prefers-color-scheme` only. Keep changes within these constraints.
 
 ## Commands
 
-Requires Hugo **extended, ≥ 0.146** (templates use the new layout system: `layouts/_partials/`, `home.html`, `page.html`, `section.html` etc. — not `layouts/_default/`). CI pins `0.154.5` in `.forgejo/workflows/deploy.yaml`; keep local and CI versions in sync.
+Requires Hugo **extended, ≥ 0.146** (templates use the new layout system: `layouts/_partials/`, `home.html`, `page.html`, `section.html` etc. — not `layouts/_default/`). CI pins `0.154.5` in `.github/workflows/deploy.yaml`; keep local and CI versions in sync.
 
 ```sh
 hugo server -D          # local preview at http://localhost:1313, includes drafts
@@ -50,4 +50,4 @@ There are no tests or linters; `hugo --minify` succeeding without warnings is th
 
 ## Deployment
 
-Every push to `main` triggers `.forgejo/workflows/deploy.yaml` (runner `codeberg-tiny`): checkout → install Hugo → `hugo --minify` → `git-pages/action` uploads `public/` to `codeberg.page` using the auto-injected `forge.token`. No `pages` branch exists. `baseURL` in `hugo.toml` and `site:` in the workflow must both match the real URL (trailing slash included) or CSS and links break. The custom domain works because the workflow sets `server: 'codeberg.page'` and DNS has a CNAME plus a `_git-pages-forge-allowlist` TXT record (see README); switching to a plain `*.codeberg.page` URL means changing `baseURL`, `site:`, and removing `server:`.
+Every push to `main` on the GitHub remote (`fmso` → `github.com/Mufabo/fmso`) triggers `.github/workflows/deploy.yaml`: checkout → install Hugo → `hugo --minify` → `upload-pages-artifact` + `deploy-pages`. Pages source is set to "GitHub Actions"; no `gh-pages` branch exists. The custom domain is defined by `static/CNAME` (copied into `public/`) and the repo's Pages settings; `baseURL` in `hugo.toml` must match it (trailing slash included) or CSS and links break. DNS: DuckDNS only supports a single A/AAAA record, so `fatihs-ai-dumping-ground.duckdns.org` must point at one of GitHub Pages' IPs (`185.199.108.153`–`185.199.111.153`). The `origin` remote (Codeberg) no longer deploys anything.

@@ -1,9 +1,8 @@
 # ── Identity ─────────────────────────────────────────────────────────
 # baseURL must exactly match where the site is served from, or CSS and
-# links will break. This site lives at the custom domain below. To test
-# on Codeberg's subdomain first, switch it to your codeberg.page URL
-# (and adjust site:/server: in .forgejo/workflows/deploy.yaml).
-baseURL = 'https://fatih.macht.sachen.online/'
+# links will break. Keep it in sync with static/CNAME (GitHub Pages
+# custom domain).
+baseURL = 'https://fatihs-ai-dumping-ground.duckdns.org/'
 title = 'fatih.macht.sachen.online'
 languageCode = 'en-us'
 capitalizeListTitles = false
