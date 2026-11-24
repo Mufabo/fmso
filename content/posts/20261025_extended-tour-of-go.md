@@ -3,7 +3,7 @@ title: 'A Tour of Go — extended edition'
 date: 2026-10-25
 tags: [go, tutorial]
 description: 'The official Tour of Go, slowed down: every section explained with the why, what happens under the hood and the common mistakes, plus all the exercises.'
-draft: true
+draft: false
 ---
 
 ## Introduction

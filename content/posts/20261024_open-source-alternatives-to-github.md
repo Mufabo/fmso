@@ -1,7 +1,7 @@
 ---
 title: 'Open source alternatives to GitHub and GitHub Actions'
 date: 2026-10-24
-draft: true
+draft: false
 tags: [git, ci/cd, self-hosting, open source]
 description: 'Open source forges (Forgejo, Gitea, GitLab CE, SourceHut, Radicle and more) and CI systems that can replace GitHub and GitHub Actions, with a comparison and recommendations.'
 ---

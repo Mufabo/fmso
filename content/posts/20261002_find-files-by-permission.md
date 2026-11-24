@@ -3,7 +3,7 @@ title: 'Finding files by permission with find'
 date: 2026-10-02
 tags: [linux, shell]
 description: 'How find -perm works with exact, "-" (all bits) and "/" (any bit) modes, worked through a permission-audit example.'
-draft: true
+draft: false
 ---
 
 Permission audits are a common sysadmin task: "which files can the group write?", "which files are hidden from others?". `find` answers these with its `-perm` test, which has three forms. A bare mode matches exactly, a `-` prefix requires **all** the given bits, and a `/` prefix requires **any** of them.[^1]
