@@ -2,8 +2,7 @@
 title: My Apps
 ---
 
-Small web apps I've built. They run entirely in the browser, work
-offline once loaded, and can be installed to your home screen.
+Apps I've built.
 
 ## Mindful Tap
 
