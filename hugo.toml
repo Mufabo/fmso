@@ -3,7 +3,7 @@
 # links will break. Keep it in sync with static/CNAME (GitHub Pages
 # custom domain).
 baseURL = 'https://fatihs-ai-dumping-ground.duckdns.org/'
-title = 'fatih.macht.sachen.online'
+title = "Fatih's AI Dumping Ground"
 languageCode = 'en-us'
 capitalizeListTitles = false
 
