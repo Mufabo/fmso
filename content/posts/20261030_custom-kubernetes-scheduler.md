@@ -202,7 +202,7 @@ kubectl label node worker-2 example.com/hourly-cost-cents=118
 The plugin implements two extension points:
 
 - **Filter** rejects nodes labelled `example.com/draining=true`, for nodes you're about to retire. (You could do this with taints too; it's here to show the shape of a filter.)
-- **Score** reads the price, and **NormalizeScore** turns prices into scores so that the cheapest node gets 100 and the most expensive gets 0.
+- **Score** reads the price, and **NormalizeScore** turns prices into scores so that the cheapest node gets 100 and the most expensive gets 0. Nodes without a price label get 0.
 
 All the default plugins still run, so resource fitting, affinity and taints behave as usual. `NodeCost` only adds an opinion on top.
 
@@ -241,9 +241,9 @@ const (
 	costLabel     = "example.com/hourly-cost-cents"
 	drainingLabel = "example.com/draining"
 
-	// Nodes without a price label are treated as expensive,
-	// so they are used only when nothing cheaper fits.
-	unknownCost = 1_000_000
+	// Marks nodes without a valid price label. NormalizeScore
+	// gives them the lowest score.
+	unknownCost = -1
 )
 
 type NodeCost struct {
@@ -254,6 +254,7 @@ type NodeCost struct {
 var (
 	_ fwk.FilterPlugin = &NodeCost{}
 	_ fwk.ScorePlugin  = &NodeCost{}
+	_ fwk.SignPlugin   = &NodeCost{}
 )
 
 // New is the factory the scheduler calls once per profile.
@@ -280,24 +281,37 @@ func (pl *NodeCost) Score(ctx context.Context, state fwk.CycleState, pod *v1.Pod
 
 func (pl *NodeCost) ScoreExtensions() fwk.ScoreExtensions { return pl }
 
-// NormalizeScore maps the cheapest node to 100 and the most expensive to 0.
+// NormalizeScore maps the cheapest labelled node to 100 and the most
+// expensive to 0. Unlabelled nodes always get 0, and are left out of the
+// range so they don't squash the differences between labelled nodes.
 func (pl *NodeCost) NormalizeScore(ctx context.Context, state fwk.CycleState, pod *v1.Pod, scores fwk.NodeScoreList) *fwk.Status {
-	if len(scores) == 0 {
-		return nil
-	}
-	lo, hi := scores[0].Score, scores[0].Score
+	lo, hi := int64(-1), int64(-1)
 	for _, s := range scores {
-		lo = min(lo, s.Score)
+		if s.Score == unknownCost {
+			continue
+		}
+		if lo == -1 || s.Score < lo {
+			lo = s.Score
+		}
 		hi = max(hi, s.Score)
 	}
 	for i := range scores {
-		if hi == lo {
+		switch {
+		case scores[i].Score == unknownCost:
+			scores[i].Score = 0
+		case hi == lo:
 			scores[i].Score = fwk.MaxNodeScore
-			continue
+		default:
+			scores[i].Score = (hi - scores[i].Score) * fwk.MaxNodeScore / (hi - lo)
 		}
-		scores[i].Score = (hi - scores[i].Score) * fwk.MaxNodeScore / (hi - lo)
 	}
 	return nil
+}
+
+// SignPod lets the scheduler batch similar Pods (KEP-5598). Our result
+// depends only on the node, never on the Pod, so there is nothing to sign.
+func (pl *NodeCost) SignPod(ctx context.Context, pod *v1.Pod) ([]fwk.SignFragment, *fwk.Status) {
+	return nil, nil
 }
 
 func costOf(n *v1.Node) int64 {
@@ -316,7 +330,9 @@ func costOf(n *v1.Node) int64 {
 A few things are worth knowing about this code:
 
 - **Statuses carry meaning.** `Unschedulable` tells the scheduler that preemption might help (evicting a lower-priority Pod could free the node). `UnschedulableAndUnresolvable` says preemption is pointless, which is right for a draining node.
-- **Score sees one node at a time.** That's why the plugin needs `NormalizeScore`: only there can it see every node's raw score and rescale them. Without normalisation, a raw score above 100 makes the scheduler fail the Pod.
+- **Score sees one node at a time.** That's why the plugin needs `NormalizeScore`: only there can it see every node's raw score and rescale them. Without normalisation, a raw score above 100 makes the scheduler fail the Pod. Raw scores outside 0–100 (like the `-1` for unlabelled nodes) are fine, as long as `NormalizeScore` brings them back into range.
+- **Keep sentinel values out of the arithmetic.** It's tempting to give unlabelled nodes a huge fake price, say 1,000,000, and let them fall to the bottom naturally. But then a single unlabelled node becomes the maximum, and nodes costing 42 and 118 cents score 100 and 99: the outlier squashes every real difference. That's why unlabelled nodes are handled separately.
+- **Batching needs `SignPod`.** Recent releases let the scheduler reuse one scheduling decision for a run of identical Pods ("opportunistic batching").[^9] The scheduler does that only if every filter and score plugin in the profile implements `SignPlugin` and describes which parts of the Pod its result depends on. A plugin that doesn't turns batching off for the whole profile, and the scheduler logs "Disabling signatures for profile because plugins do not support it". `NodeCost` never looks at the Pod, so returning no fragments is correct.
 - **Keep Filter and Score fast.** They run for every candidate Pod and node pair, potentially thousands of times a second. Never call the API server from them. Read cluster state through the handle's informers (`h.SharedInformerFactory()`), and compute anything expensive once per Pod in `PreFilter` or `PreScore`, storing it in `CycleState` for later stages to read.
 - **Requeueing.** When a Pod is rejected, the scheduler parks it until something in the cluster changes. A plugin can implement `EnqueueExtensions` to say which events (a node label changing, say) could make a rejected Pod schedulable. If you don't implement it, the scheduler conservatively retries on all events, which is correct but wasteful in big clusters.
 
@@ -384,6 +400,10 @@ The result is a full `kube-scheduler` with every default plugin plus `NodeCost`,
 **The `go.mod` trap.** Importing `k8s.io/kubernetes` is awkward because it isn't designed to be used as a library. Its `go.mod` refers to the `k8s.io/*` staging modules (`k8s.io/api`, `k8s.io/client-go`, `k8s.io/kube-scheduler` and two dozen others) at version `v0.0.0`, which doesn't exist. You need a `replace` directive for every one of them, pinned to the matching release: Kubernetes v1.37.x pairs with `v0.37.x` of the staging modules.
 
 ```text
+module example.com/cost-scheduler
+
+go 1.26
+
 require k8s.io/kubernetes v1.37.x
 
 replace (
@@ -663,3 +683,4 @@ If the Pods sit in `Pending` with no events at all, the scheduler isn't picking 
 [^6]: [kubernetes/kube-scheduler](https://github.com/kubernetes/kube-scheduler), the published module containing the configuration types and plugin framework interfaces.
 [^7]: [Configure Multiple Schedulers](https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/), Kubernetes documentation.
 [^8]: [kube-scheduler-simulator](https://github.com/kubernetes-sigs/kube-scheduler-simulator), for visualising plugin decisions.
+[^9]: [KEP-5598: Opportunistic Batching](https://github.com/kubernetes/enhancements/issues/5598), Kubernetes enhancement tracking issue.

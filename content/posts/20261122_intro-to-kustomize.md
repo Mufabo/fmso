@@ -232,7 +232,7 @@ secretGenerator:
 
 The generated object gets a **content hash suffix**, like `web-config-7b2k9h4m5f`, and Kustomize rewrites every reference to `web-config` to use the hashed name. When the content changes, the name changes, so the Deployment's pod template changes and Kubernetes rolls out new pods. That fixes the classic "I updated the ConfigMap but the pods still have the old config" problem.[^8] Old ConfigMaps are left behind; `kubectl apply --prune` or your GitOps tool cleans them up. If something outside Kustomize needs a stable name, turn the suffix off with `options: { disableNameSuffixHash: true }`.
 
-A warning about `secretGenerator`: it only base64-encodes values, like any Secret. Never commit the source files in plain text. Pair Kustomize with SOPS (via the ksops plugin or Flux's built-in decryption) or the External Secrets Operator; see my post on [Kubernetes Secrets]({{< relref "kubernetes-secrets.md" >}}).
+A warning about `secretGenerator`: it only base64-encodes values, like any Secret. Never commit the source files in plain text. Pair Kustomize with SOPS (via the ksops plugin or Flux's built-in decryption) or the External Secrets Operator; see my post on [Kubernetes Secrets]({{< relref "20261112_kubernetes-secrets.md" >}}).
 
 ### `replacements`
 
@@ -320,7 +320,7 @@ diff before.yaml after.yaml
 
 ## Kustomize vs Helm
 
-They solve overlapping problems from opposite ends. (I've covered Helm in its own post: [Helm for Kubernetes]({{< relref "helm-for-kubernetes.md" >}}).)
+They solve overlapping problems from opposite ends. (I've covered Helm in its own post: [Helm for Kubernetes]({{< relref "20261111_helm-for-kubernetes.md" >}}).)
 
 | | Kustomize | Helm |
 |---|---|---|

@@ -12,7 +12,7 @@ Ask the Linux kernel to list its containers and it can't: there's no such object
 
 A container is a **normal process** that the kernel has been told to restrict in several independent ways: what it can **see**, what it can **use**, and what it's **allowed to do**. Each of those restrictions is a separate kernel feature that predates Docker, and each is useful on its own. This post walks through them one at a time, then shows how a runtime puts them together, how Kubernetes exposes them, and where the isolation stops.
 
-It sits next to two earlier posts: [container storage drivers]({{< relref "20261122_container-storage-drivers-overlay2.md" >}}) covers the filesystem a container sees, and [privileged containers vs the host]({{< relref "docker-privileged-container-vs-host.md" >}}) covers what happens when you switch most of this off.
+It sits next to two earlier posts: [container storage drivers]({{< relref "20261122_container-storage-drivers-overlay2.md" >}}) covers the filesystem a container sees, and [privileged containers vs the host]({{< relref "20261113_docker-privileged-container-vs-host.md" >}}) covers what happens when you switch most of this off.
 
 ## The isolation every process already has
 
@@ -97,7 +97,7 @@ Every resource flag you've used maps to one of these:
 | Kubernetes `limits.cpu` | `cpu.max` (CFS quota, which is what causes throttling) |
 | Kubernetes `requests.cpu` | `cpu.weight` (relative share) |
 
-When a container exceeds `memory.max`, the kernel's OOM killer kills a process **inside that cgroup**, not some random process on the host. That's the `OOMKilled` status in Kubernetes. My post on [right-sizing resource requests]({{< relref "right-sizing-kubernetes-resource-requests.md" >}}) goes into how to pick the numbers.
+When a container exceeds `memory.max`, the kernel's OOM killer kills a process **inside that cgroup**, not some random process on the host. That's the `OOMKilled` status in Kubernetes. My post on [right-sizing resource requests]({{< relref "20261119_right-sizing-kubernetes-resource-requests.md" >}}) goes into how to pick the numbers.
 
 `pids.max` deserves a special mention: without it, a fork bomb in one container takes down the whole node.
 
@@ -174,7 +174,7 @@ None of these steps needs Docker. The lab at the end does most of them by hand w
 
 ## How Kubernetes maps onto this
 
-A **pod** is a set of containers that share some namespaces and not others. The kubelet first starts a tiny `pause` container that holds the pod's **network, IPC and UTS** namespaces; every app container joins those. That's why containers in a pod reach each other on `localhost` and share a hostname. Each container keeps its own **mount** namespace (its own image filesystem) and, by default, its own **PID** namespace, unless you set `shareProcessNamespace: true`. My post on [multi-container pods]({{< relref "multi-container-pods.md" >}}) shows patterns that rely on this.
+A **pod** is a set of containers that share some namespaces and not others. The kubelet first starts a tiny `pause` container that holds the pod's **network, IPC and UTS** namespaces; every app container joins those. That's why containers in a pod reach each other on `localhost` and share a hostname. Each container keeps its own **mount** namespace (its own image filesystem) and, by default, its own **PID** namespace, unless you set `shareProcessNamespace: true`. My post on [multi-container pods]({{< relref "20261117_multi-container-pods.md" >}}) shows patterns that rely on this.
 
 Almost every field of `securityContext` is one of the features above:
 
@@ -204,7 +204,7 @@ securityContext:
     type: RuntimeDefault
 ```
 
-which is roughly what the Pod Security Standards' `restricted` profile requires. The post on [preventing privilege escalation in Kubernetes]({{< relref "preventing-privilege-escalation-in-kubernetes.md" >}}) goes through enforcing it.
+which is roughly what the Pod Security Standards' `restricted` profile requires. The post on [preventing privilege escalation in Kubernetes]({{< relref "20261116_preventing-privilege-escalation-in-kubernetes.md" >}}) goes through enforcing it.
 
 ## Where the isolation ends
 
@@ -229,7 +229,7 @@ Container escapes therefore come in two flavours:
 
 **Misconfiguration**, by far the most common in practice:
 
-- `--privileged` / `privileged: true`: all capabilities, no seccomp, no AppArmor, every host device, writable `/sys`. From there, mounting the host's disk is one command. (See [privileged containers vs the host]({{< relref "docker-privileged-container-vs-host.md" >}}).)
+- `--privileged` / `privileged: true`: all capabilities, no seccomp, no AppArmor, every host device, writable `/sys`. From there, mounting the host's disk is one command. (See [privileged containers vs the host]({{< relref "20261113_docker-privileged-container-vs-host.md" >}}).)
 - Mounting `/var/run/docker.sock` or the containerd socket: whoever can talk to it can start a privileged container.
 - `CAP_SYS_ADMIN`, `hostPID`, `hostPath` mounts of `/` or `/etc`.
 

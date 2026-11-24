@@ -143,7 +143,7 @@ When you run `ps`, `free` or `top`, they're mostly reading files in `/proc`.
 
 ## Networking
 
-The full network stack lives in the kernel: Ethernet, IP, routing tables, TCP and UDP, the netfilter firewall (iptables/nftables), bridges, VLANs, veth pairs, VXLAN tunnels and network namespaces. A program opens a socket and calls `connect()`; the kernel does the handshake, retransmits lost packets, and manages buffers. This is why Kubernetes networking, Docker's bridge and most CNI plugins are really just configuration of kernel features. My posts on [networking basics]({{< relref "networking-basics-for-lfcs.md" >}}) and [cross-node pod networking]({{< relref "troubleshooting-cross-node-pod-networking.md" >}}) go into those.
+The full network stack lives in the kernel: Ethernet, IP, routing tables, TCP and UDP, the netfilter firewall (iptables/nftables), bridges, VLANs, veth pairs, VXLAN tunnels and network namespaces. A program opens a socket and calls `connect()`; the kernel does the handshake, retransmits lost packets, and manages buffers. This is why Kubernetes networking, Docker's bridge and most CNI plugins are really just configuration of kernel features. My posts on [networking basics]({{< relref "20261113_networking-basics-for-lfcs.md" >}}) and [cross-node pod networking]({{< relref "20261116_troubleshooting-cross-node-pod-networking.md" >}}) go into those.
 
 **eBPF** has become the kernel's way to add logic to these paths without writing a kernel module. Small, verified programs can be attached to network hooks, syscalls and tracepoints; Cilium, Falco and most modern observability tools are built on it.
 
@@ -216,7 +216,7 @@ It also explains a few practical things:
 - Kernel modules are loaded on the host, never in a container.
 - Linux containers need a Linux kernel, so Docker Desktop on macOS and Windows runs a small Linux VM in the background.
 
-If you'd like to see what it takes to write a kernel from scratch, [writing an operating system in Go]({{< relref "writing-an-operating-system-in-go.md" >}}) goes down that path.
+If you'd like to see what it takes to write a kernel from scratch, [writing an operating system in Go]({{< relref "20261114_writing-an-operating-system-in-go.md" >}}) goes down that path.
 
 ## Hands-on lab: look inside a running kernel
 
