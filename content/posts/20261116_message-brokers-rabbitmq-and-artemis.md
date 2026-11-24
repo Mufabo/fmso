@@ -93,7 +93,7 @@ A **durable** queue survives a broker restart. A **persistent** message is writt
 
 ### Protocols
 
-Brokers speak standard wire protocols, which is what lets a Python producer talk to a Java consumer through the same broker:
+Brokers speak standard wire protocols, which is what lets a Go producer talk to a Java consumer through the same broker:
 
 - **AMQP 0-9-1**: the protocol RabbitMQ was built around, with exchanges and bindings baked in.
 - **AMQP 1.0**: an OASIS and ISO standard. Despite the name, it's a different protocol from 0-9-1, and it doesn't define broker topology.
@@ -154,49 +154,125 @@ docker run -d --name rabbitmq \
   rabbitmq:4-management
 ```
 
-A producer and a consumer in Python, using the `pika` client:
+A producer and a consumer in Go, using the official [`amqp091-go`](https://github.com/rabbitmq/amqp091-go) client (`go get github.com/rabbitmq/amqp091-go`). Start the consumer first, since it declares the queue:
 
-```python
-# producer.py
-import json
-import pika
+```go
+// producer/main.go
+package main
 
-conn = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
-ch = conn.channel()
+import (
+	"context"
+	"encoding/json"
+	"log"
+	"time"
 
-ch.exchange_declare(exchange="orders", exchange_type="topic", durable=True)
-ch.confirm_delivery()  # publisher confirms
-
-order = {"id": 42, "total": 19.99}
-ch.basic_publish(
-    exchange="orders",
-    routing_key="order.paid",
-    body=json.dumps(order),
-    properties=pika.BasicProperties(delivery_mode=2, message_id="order-42-paid"),
+	amqp "github.com/rabbitmq/amqp091-go"
 )
-conn.close()
+
+type Order struct {
+	ID    int     `json:"id"`
+	Total float64 `json:"total"`
+}
+
+func main() {
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ch.Close()
+
+	if err := ch.ExchangeDeclare("orders", "topic", true, false, false, false, nil); err != nil {
+		log.Fatal(err)
+	}
+	if err := ch.Confirm(false); err != nil { // publisher confirms
+		log.Fatal(err)
+	}
+
+	body, _ := json.Marshal(Order{ID: 42, Total: 19.99})
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	confirm, err := ch.PublishWithDeferredConfirmWithContext(ctx, "orders", "order.paid", false, false,
+		amqp.Publishing{
+			ContentType:  "application/json",
+			DeliveryMode: amqp.Persistent,
+			MessageId:    "order-42-paid",
+			Body:         body,
+		})
+	if err != nil {
+		log.Fatal(err)
+	}
+	if ok, err := confirm.WaitContext(ctx); err != nil || !ok {
+		log.Fatalf("broker did not confirm the message: %v", err)
+	}
+	log.Println("published and confirmed")
+}
 ```
 
-```python
-# consumer.py
-import json
-import pika
+```go
+// consumer/main.go
+package main
 
-conn = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
-ch = conn.channel()
+import (
+	"encoding/json"
+	"log"
 
-ch.exchange_declare(exchange="orders", exchange_type="topic", durable=True)
-ch.queue_declare(queue="billing", durable=True, arguments={"x-queue-type": "quorum"})
-ch.queue_bind(queue="billing", exchange="orders", routing_key="order.*")
-ch.basic_qos(prefetch_count=10)
+	amqp "github.com/rabbitmq/amqp091-go"
+)
 
-def handle(channel, method, properties, body):
-    order = json.loads(body)
-    print(f"billing order {order['id']}")
-    channel.basic_ack(delivery_tag=method.delivery_tag)  # ack after processing
+type Order struct {
+	ID    int     `json:"id"`
+	Total float64 `json:"total"`
+}
 
-ch.basic_consume(queue="billing", on_message_callback=handle)
-ch.start_consuming()
+func main() {
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ch.Close()
+
+	if err := ch.ExchangeDeclare("orders", "topic", true, false, false, false, nil); err != nil {
+		log.Fatal(err)
+	}
+	q, err := ch.QueueDeclare("billing", true, false, false, false,
+		amqp.Table{"x-queue-type": "quorum"})
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := ch.QueueBind(q.Name, "order.*", "orders", false, nil); err != nil {
+		log.Fatal(err)
+	}
+	if err := ch.Qos(10, 0, false); err != nil { // prefetch
+		log.Fatal(err)
+	}
+
+	deliveries, err := ch.Consume(q.Name, "", false, false, false, false, nil) // manual acks
+	if err != nil {
+		log.Fatal(err)
+	}
+	for d := range deliveries {
+		var order Order
+		if err := json.Unmarshal(d.Body, &order); err != nil {
+			d.Nack(false, false) // malformed: reject without requeue (dead-letter it)
+			continue
+		}
+		log.Printf("billing order %d", order.ID)
+		d.Ack(false) // ack after processing
+	}
+}
 ```
 
 The producer only knows about the `orders` exchange and the routing key. Adding an `audit` service later is just another queue bound to the same exchange. The producer doesn't change.
@@ -332,45 +408,96 @@ nats sub 'orders.*.paid' --queue billing   # one of possibly many billing worker
 nats pub orders.eu.paid '{"id": 42}'
 ```
 
-A durable JetStream work queue in Python, using the `nats-py` client:
+A durable JetStream work queue in Go, using the official [`nats.go`](https://github.com/nats-io/nats.go) client and its `jetstream` package (`go get github.com/nats-io/nats.go`):
 
-```python
-# jetstream.py
-import asyncio
-import json
+```go
+// main.go
+package main
 
-import nats
-from nats.js.api import RetentionPolicy
+import (
+	"context"
+	"encoding/json"
+	"log"
+	"time"
 
-async def main():
-    nc = await nats.connect("nats://localhost:4222")
-    js = nc.jetstream()
+	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
+)
 
-    # A replicated, persistent stream that behaves like a work queue
-    await js.add_stream(
-        name="ORDERS",
-        subjects=["orders.>"],
-        retention=RetentionPolicy.WORK_QUEUE,
-    )
+type Order struct {
+	ID    int     `json:"id"`
+	Total float64 `json:"total"`
+}
 
-    # Producer: the Nats-Msg-Id header lets the server drop duplicates
-    await js.publish(
-        "orders.eu.paid",
-        json.dumps({"id": 42, "total": 19.99}).encode(),
-        headers={"Nats-Msg-Id": "order-42-paid"},
-    )
+func main() {
+	nc, err := nats.Connect(nats.DefaultURL) // nats://127.0.0.1:4222
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nc.Drain()
 
-    # Consumer: a durable pull consumer, acking after processing
-    sub = await js.pull_subscribe("orders.>", durable="billing")
-    for msg in await sub.fetch(10, timeout=5):
-        order = json.loads(msg.data)
-        print(f"billing order {order['id']}")
-        await msg.ack()
+	js, err := jetstream.New(nc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-    await nc.close()
+	// A persistent stream that behaves like a work queue
+	if _, err := js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
+		Name:      "ORDERS",
+		Subjects:  []string{"orders.>"},
+		Retention: jetstream.WorkQueuePolicy,
+	}); err != nil {
+		log.Fatal(err)
+	}
 
-asyncio.run(main())
+	// Producer: publishing twice with the same message ID stores it once
+	body, _ := json.Marshal(Order{ID: 42, Total: 19.99})
+	for range 2 {
+		ack, err := js.Publish(ctx, "orders.eu.paid", body, jetstream.WithMsgID("order-42-paid"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("stored as seq %d, duplicate=%v", ack.Sequence, ack.Duplicate)
+	}
+
+	// Consumer: a durable pull consumer, acking after processing
+	cons, err := js.CreateOrUpdateConsumer(ctx, "ORDERS", jetstream.ConsumerConfig{
+		Durable:   "billing",
+		AckPolicy: jetstream.AckExplicitPolicy,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	batch, err := cons.Fetch(10, jetstream.FetchMaxWait(2*time.Second))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for msg := range batch.Messages() {
+		var order Order
+		if err := json.Unmarshal(msg.Data(), &order); err != nil {
+			msg.Term() // malformed: never redeliver
+			continue
+		}
+		log.Printf("billing order %d", order.ID)
+		msg.Ack()
+	}
+	if err := batch.Error(); err != nil {
+		log.Fatal(err)
+	}
+}
 ```
+
+The output shows deduplication at work:
+
+```text
+stored as seq 1, duplicate=false
+stored as seq 1, duplicate=true
+billing order 42
+```
+
+Run it again within two minutes and both publishes report `duplicate=true`: the server remembers message IDs for the stream's duplicate window, even after the message itself has been consumed and removed.
 
 The stream is a single server-side object here: switching `retention` to `limits` turns the same subjects into a replayable log that any number of consumers can read at their own pace.
 
