@@ -42,7 +42,7 @@ Three things make a mathematical proof different from evidence in other fields:
 2. **It covers every case at once.** A statement like "every four-digit palindrome" talks about all of them. A proof has to work for each one, including the ones nobody has written down.
 3. **Every step is checkable.** A reader should be able to look at each line and agree that it follows from the previous ones, without having to trust the author.
 
-The history of mathematics has plenty of patterns that held for a very long time and then failed. A classic: the polynomial n² + n + 41 produces a prime number for n = 0, 1, 2, …, 39. Forty primes in a row. At n = 40 it gives 1681 = 41 × 41. No number of examples is a substitute for an argument.
+The history of mathematics has plenty of patterns that held for a very long time and then failed. A classic: the polynomial n² + n + 41 produces a prime number for n = 0, 1, 2, …, 39. Forty primes in a row. At n = 40 it gives 1681 = 41 × 41.[^1] No number of examples is a substitute for an argument.
 
 ### Theorems, lemmas and conjectures
 
@@ -264,7 +264,7 @@ print(len(palindromes))                          # 90
 print(all(n % 11 == 0 for n in palindromes))     # True
 ```
 
-Is that a proof? **Yes, actually.** It's a **proof by exhaustion**: when a statement is about finitely many objects, checking every one of them is logically valid. Some famous theorems, like the Four Colour Theorem, were proved by reducing them to a large but finite set of cases and checking those by computer.
+Is that a proof? **Yes, actually.** It's a **proof by exhaustion**: when a statement is about finitely many objects, checking every one of them is logically valid. Some famous theorems, like the Four Colour Theorem, were proved by reducing them to a large but finite set of cases and checking those by computer.[^2]
 
 But it's a proof with two weaknesses:
 
@@ -303,7 +303,7 @@ A single statement usually has many proofs. Seeing several side by side is one o
 
 ### Proof using the divisibility rule for 11
 
-You may have learned a shortcut at school: a number is divisible by 11 if and only if the **alternating sum** of its digits (from the right: +, −, +, −, …) is divisible by 11. For 4554: 4 − 5 + 5 − 4 = 0, and 0 is divisible by 11.
+You may have learned a shortcut at school: a number is divisible by 11 if and only if the **alternating sum** of its digits (from the right: +, −, +, −, …) is divisible by 11.[^3] For 4554: 4 − 5 + 5 − 4 = 0, and 0 is divisible by 11.
 
 If you're allowed to use that rule as a known result, the proof is one line:
 
@@ -445,7 +445,7 @@ And a habit for *finding* proofs rather than writing them: **work examples first
 
 ## Fully formal proofs: letting a computer check
 
-At the start we separated rigorous proofs from **fully formal** ones, written in a language precise enough for software to verify. Programs that do this are called **proof assistants**; well-known ones include Lean, Coq (now Rocq), Isabelle and Agda. Large parts of mathematics have been formalised in them, and mathematicians increasingly use them to check difficult new results.
+At the start we separated rigorous proofs from **fully formal** ones, written in a language precise enough for software to verify. Programs that do this are called **proof assistants**; well-known ones include Lean, Coq (now Rocq),[^4] Isabelle and Agda. Large parts of mathematics have been formalised in them, and mathematicians increasingly use them to check difficult new results.
 
 Here's the core of our theorem in **Lean 4** with its mathematics library, Mathlib:
 
@@ -464,7 +464,7 @@ Read it like the written proof:
 - The statement says: for all natural numbers a and b, 11 divides 1000a + 100b + 10b + a.
 - In Lean, `11 ∣ n` is defined as "there exists c with n = 11 * c", exactly our definition of divisibility.
 - `⟨91 * a + 10 * b, …⟩` **exhibits the witness** k = 91a + 10b.
-- `by ring` asks Lean to verify that 1000a + 100b + 10b + a really equals 11 · (91a + 10b), using the algebra of commutative rings.
+- `by ring` asks Lean to verify that 1000a + 100b + 10b + a really equals 11 · (91a + 10b), using the algebra of commutative rings.[^5]
 
 If any step were wrong, Lean would refuse to accept the theorem. The checker doesn't care how convincing the argument sounds; it only cares whether every step follows from the rules.
 
@@ -483,8 +483,14 @@ Notice that the formal version doesn't need the digit ranges at all: it proves t
 
 ## Further reading
 
-- Daniel J. Velleman, *How to Prove It: A Structured Approach* (Cambridge University Press). The standard introduction to proof-writing, with a strong focus on logic and quantifiers.
-- Richard Hammack, *Book of Proof*. A clear introductory text, freely available online from the author.
-- George Pólya, *How to Solve It*. The classic on how to *find* proofs: heuristics like working examples, specialising, and generalising.
-- Kevin Houston, *How to Think Like a Mathematician* (Cambridge University Press). A practical guide for students starting university mathematics.
-- *Mathematics in Lean* and *Theorem Proving in Lean 4*, from the Lean community. Free tutorials for writing fully formal proofs.
+- Daniel J. Velleman, [*How to Prove It: A Structured Approach*](https://doi.org/10.1017/9781108539890) (Cambridge University Press). The standard introduction to proof-writing, with a strong focus on logic and quantifiers.
+- Richard Hammack, [*Book of Proof*](https://richardhammack.github.io/BookOfProof/). A clear introductory text, freely available online from the author.
+- George Pólya, [*How to Solve It*](https://doi.org/10.1515/9781400828678). The classic on how to *find* proofs: heuristics like working examples, specialising, and generalising.
+- Kevin Houston, [*How to Think Like a Mathematician*](https://doi.org/10.1017/CBO9780511808258) (Cambridge University Press). A practical guide for students starting university mathematics.
+- [*Mathematics in Lean*](https://leanprover-community.github.io/mathematics_in_lean/) and [*Theorem Proving in Lean 4*](https://lean-lang.org/theorem_proving_in_lean4/), from the Lean community. Free tutorials for writing fully formal proofs.
+
+[^1]: Weisstein EW. [Prime-Generating Polynomial](https://mathworld.wolfram.com/Prime-GeneratingPolynomial.html), Wolfram MathWorld.
+[^2]: Weisstein EW. [Four-Color Theorem](https://mathworld.wolfram.com/Four-ColorTheorem.html), Wolfram MathWorld.
+[^3]: Weisstein EW. [Divisibility Tests](https://mathworld.wolfram.com/DivisibilityTests.html), Wolfram MathWorld.
+[^4]: [The Rocq Prover](https://rocq-prover.org/), formerly known as the Coq Proof Assistant.
+[^5]: [Mathlib.Tactic.Ring.Basic](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Tactic/Ring/Basic.html), Mathlib documentation for the `ring` tactic.
