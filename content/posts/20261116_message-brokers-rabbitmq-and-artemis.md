@@ -1,10 +1,10 @@
 ---
-title: "Message Brokers Explained: RabbitMQ, ActiveMQ Artemis, and How They Differ from Kafka"
-date: 2026-11-16
-draft: true
-description: "What a message broker is, why you would put one between your services, the core concepts (queues, topics, acknowledgements, dead-lettering, protocols), and how RabbitMQ and Apache ActiveMQ Artemis approach the job, compared with Kafka's log-based model."
-summary: "Instead of calling each other directly, services can hand messages to a broker that stores, routes and delivers them. Here is what a message broker does, the concepts you need, and how RabbitMQ and ActiveMQ Artemis compare, with Kafka as the counterpoint."
-tags: ["messaging", "message broker", "rabbitmq", "activemq artemis", "kafka", "amqp", "distributed systems"]
+title: "Message Brokers Explained: RabbitMQ, ActiveMQ Artemis, NATS, and How They Differ from Kafka"
+date: 2026-11-24
+draft: false
+description: "What a message broker is, why you would put one between your services, the core concepts (queues, topics, acknowledgements, dead-lettering, protocols), and how RabbitMQ, Apache ActiveMQ Artemis and NATS approach the job, compared with Kafka's log-based model."
+summary: "Instead of calling each other directly, services can hand messages to a broker that stores, routes and delivers them. Here is what a message broker does, the concepts you need, and how RabbitMQ, ActiveMQ Artemis and NATS compare, with Kafka as the counterpoint."
+tags: ["messaging", "message broker", "rabbitmq", "activemq artemis", "nats", "jetstream", "kafka", "amqp", "distributed systems"]
 categories: ["Programming"]
 ---
 
@@ -12,7 +12,7 @@ Sooner or later, every system with more than one service runs into the same ques
 
 The obvious answer is a direct call. Service A sends an HTTP or gRPC request to service B and waits for the answer. That works well until B is slow, B is down, B gets ten times more traffic than usual, or five other services also need to know what A just did.
 
-A **message broker** is the other answer. This post covers what a broker is, why you would use one, the concepts that show up in every broker, and how two popular ones, **RabbitMQ** and **Apache ActiveMQ Artemis**, approach the job. Kafka comes in at the end, because it's often lumped in with them but works quite differently.
+A **message broker** is the other answer. This post covers what a broker is, why you would use one, the concepts that show up in every broker, and how three popular ones, **RabbitMQ**, **Apache ActiveMQ Artemis** and **NATS**, approach the job. Kafka comes in at the end, because it's often lumped in with them but works quite differently.
 
 ## What a message broker is
 
@@ -21,12 +21,12 @@ A message broker is a server that sits between the programs that **produce** mes
 ```text
  Direct call                         Through a broker
 
- ┌─────────┐   HTTP    ┌─────────┐   ┌──────────┐      ┌────────┐      ┌──────────┐
- │Service A│──────────►│Service B│   │ Producer │─────►│ Broker │─────►│ Consumer │
- └─────────┘  (waits)  └─────────┘   └──────────┘      │ ┌────┐ │      └──────────┘
-                                       (moves on)       │ │queue│ │
-                                                        │ └────┘ │
-                                                        └────────┘
+ ┌─────────┐   HTTP    ┌─────────┐   ┌──────────┐     ┌─────────┐     ┌──────────┐
+ │Service A│──────────►│Service B│   │ Producer │────►│ Broker  │────►│ Consumer │
+ └─────────┘  (waits)  └─────────┘   └──────────┘     │ ┌─────┐ │     └──────────┘
+                                      (moves on)      │ │queue│ │
+                                                      │ └─────┘ │
+                                                      └─────────┘
 ```
 
 A good analogy is a post office. You drop off a letter and go home. The post office stores it, sorts it, and delivers it when the recipient is there. You don't need to know whether the recipient is home, or even exactly where they live.
@@ -274,26 +274,128 @@ docker exec artemis /var/lib/artemis-instance/bin/artemis consumer \
 
 From Java, you'd typically use the JMS (Jakarta Messaging) API with the Artemis client, or Spring's `JmsTemplate`. From other languages, use any AMQP 1.0 client (such as Qpid Proton) or STOMP.
 
-## RabbitMQ vs ActiveMQ Artemis
+## NATS
 
-Both are mature, capable, general-purpose brokers. The differences are more about ecosystem and model than about raw capability.
+NATS is the odd one out in this lineup. It's a small, fast messaging system written in Go, shipped as a single server binary,[^10] and a CNCF project since 2018. In 2025 its original sponsor, Synadia, tried to withdraw it from the CNCF and move the server to the Business Source License. That ended with Synadia assigning the NATS trademarks to the Linux Foundation and the project staying in the CNCF under Apache 2.0.[^11]
 
-| | RabbitMQ | ActiveMQ Artemis |
+NATS has two layers, and the difference matters more than anything else about it.
+
+### Core NATS: fire-and-forget pub/sub
+
+**Core NATS** is plain publish/subscribe with no storage at all. A message goes only to the subscribers that are connected when it's published. The server doesn't keep it for later, and there are no acknowledgements. In the documentation's words, core NATS is **at-most-once**.[^12] That sounds like a limitation, and it is one, but it's also why core NATS is so fast and so simple to run: there is no queue to fill up and nothing on disk.
+
+Addressing works through **subjects**: dot-separated names like `orders.eu.paid`. Subscribers can use two wildcards:[^13]
+
+| Wildcard | Matches | Example |
 | --- | --- | --- |
-| Language / runtime | Erlang | Java |
-| Origin | Rabbit Technologies, now Broadcom (VMware Tanzu) | JBoss HornetQ, donated to Apache |
-| Native model | Exchanges → bindings → queues | Addresses with anycast / multicast queues |
-| Routing flexibility | Very high (topic patterns, headers, E2E bindings) | Simpler, plus diverts and filters |
-| Protocols | AMQP 0-9-1, AMQP 1.0 (core); MQTT, STOMP (plugins) | Core, AMQP 1.0, OpenWire, MQTT, STOMP |
-| Java / JMS fit | Via a JMS client | First-class |
-| Replicated queues | Quorum queues (Raft), streams | Journal replication or shared store |
-| Replayable log | Streams | Not the primary model |
-| Typical home | Polyglot microservices, task queues | Enterprise Java, Jakarta EE, ActiveMQ Classic migrations |
+| `*` | Exactly one token | `orders.*.paid` matches `orders.eu.paid` |
+| `>` | One or more tokens, only at the end | `orders.>` matches `orders.eu.paid` and `orders.us` |
+
+There are no exchanges, bindings or addresses to declare. A subject exists as soon as someone publishes or subscribes to it.
+
+Two patterns come built in:
+
+- **Queue groups.** Subscribers that join with the same queue name share the work: each message goes to one randomly chosen member. The queue name is chosen by the application, not configured on the server, and members can come and go at any time. Core queue groups never redeliver, though.[^14]
+- **Request/reply.** The requester subscribes to a unique, auto-generated inbox subject (prefixed `_INBOX`), publishes the request with that inbox as the reply address, and waits for the first answer. If nobody is subscribed, the server reports "no responders" straight away instead of letting the request time out.[^15]
+
+### JetStream: persistence on top
+
+**JetStream** is the persistence layer built into the same server. It adds what core NATS deliberately leaves out:[^16]
+
+- A **stream** captures every message published to one or more subjects, stores it, and gives it a sequence number. Streams can be replicated across servers (typically three replicas, kept consistent with Raft).
+- A **consumer** is a stateful, server-side view of a stream that tracks how far a client has got. If a message isn't acknowledged in time, the server redelivers it, which gives you **at-least-once** delivery.
+- A **retention policy** decides when messages leave a stream:[^17]
+  - `limits` (the default): keep messages until a count, size or age limit is reached, whether anyone read them or not. This is the log model.
+  - `interest`: delete a message once every consumer interested in it has acknowledged it.
+  - `workqueue`: delete a message as soon as one consumer acknowledges it. This is the classic queue model.
+- **Deduplication**: if the producer sets a stable `Nats-Msg-Id` header, the server drops a repeated publish instead of storing it twice.[^18] Together with idempotent consumers, that gets you as close to exactly-once as any of these systems do.
+
+JetStream also provides a **key-value store** and an **object store**, both built on streams, so small teams sometimes use NATS for configuration and blobs as well as messaging.
+
+So a single NATS deployment can act as a fast pub/sub bus, a work queue and a replayable log, depending on how each stream is configured.
+
+### A quick look
+
+Run a server with JetStream enabled (`-js`) and the monitoring endpoint on port 8222. Clients connect on port 4222:
+
+```bash
+docker run -d --name nats \
+  -p 4222:4222 -p 8222:8222 \
+  nats:latest -js -m 8222
+```
+
+Core NATS with the `nats` CLI. Run the two subscribers in separate terminals, then publish:
+
+```bash
+nats sub 'orders.>'                        # gets every message
+nats sub 'orders.*.paid' --queue billing   # one of possibly many billing workers
+nats pub orders.eu.paid '{"id": 42}'
+```
+
+A durable JetStream work queue in Python, using the `nats-py` client:
+
+```python
+# jetstream.py
+import asyncio
+import json
+
+import nats
+from nats.js.api import RetentionPolicy
+
+async def main():
+    nc = await nats.connect("nats://localhost:4222")
+    js = nc.jetstream()
+
+    # A replicated, persistent stream that behaves like a work queue
+    await js.add_stream(
+        name="ORDERS",
+        subjects=["orders.>"],
+        retention=RetentionPolicy.WORK_QUEUE,
+    )
+
+    # Producer: the Nats-Msg-Id header lets the server drop duplicates
+    await js.publish(
+        "orders.eu.paid",
+        json.dumps({"id": 42, "total": 19.99}).encode(),
+        headers={"Nats-Msg-Id": "order-42-paid"},
+    )
+
+    # Consumer: a durable pull consumer, acking after processing
+    sub = await js.pull_subscribe("orders.>", durable="billing")
+    for msg in await sub.fetch(10, timeout=5):
+        order = json.loads(msg.data)
+        print(f"billing order {order['id']}")
+        await msg.ack()
+
+    await nc.close()
+
+asyncio.run(main())
+```
+
+The stream is a single server-side object here: switching `retention` to `limits` turns the same subjects into a replayable log that any number of consumers can read at their own pace.
+
+## RabbitMQ vs ActiveMQ Artemis vs NATS
+
+All three are mature and capable. The differences are more about ecosystem and model than about raw capability.
+
+| | RabbitMQ | ActiveMQ Artemis | NATS |
+| --- | --- | --- | --- |
+| Language / runtime | Erlang | Java | Go |
+| Origin | Rabbit Technologies, now Broadcom (VMware Tanzu) | JBoss HornetQ, donated to Apache | Created at Apcera, donated to the CNCF by Synadia |
+| Native model | Exchanges → bindings → queues | Addresses with anycast / multicast queues | Subjects with wildcards; JetStream streams and consumers |
+| Routing flexibility | Very high (topic patterns, headers, E2E bindings) | Simpler, plus diverts and filters | Subject wildcards only, but cheap and dynamic |
+| Default delivery | At-least-once with acks | At-least-once with acks | At-most-once (core); at-least-once with JetStream |
+| Protocols | AMQP 0-9-1, AMQP 1.0 (core); MQTT, STOMP (plugins) | Core, AMQP 1.0, OpenWire, MQTT, STOMP | NATS protocol; MQTT and WebSocket support |
+| Java / JMS fit | Via a JMS client | First-class | No JMS; native clients |
+| Replicated storage | Quorum queues (Raft), streams | Journal replication or shared store | JetStream streams (Raft) |
+| Replayable log | Streams | Not the primary model | JetStream with `limits` retention |
+| Typical home | Polyglot microservices, task queues | Enterprise Java, Jakarta EE, ActiveMQ Classic migrations | Cloud-native and edge systems, service-to-service messaging, request/reply |
 
 A rough rule of thumb:
 
 - Choose **RabbitMQ** if you have a polyglot stack, want rich routing, or want a huge ecosystem of client libraries and tutorials.
 - Choose **Artemis** if you're in the Java/JMS world, are migrating from ActiveMQ Classic, or need many protocols on one broker.
+- Choose **NATS** if you want low latency and minimal operations, need request/reply as much as queues, or run on the edge or in Kubernetes, where a small single binary is a real advantage.
 
 ## Where Kafka fits
 
@@ -301,21 +403,22 @@ Kafka is usually mentioned in the same breath, but it's built on a different ide
 
 RabbitMQ and Artemis are **"smart broker, simple consumer"** systems. The broker tracks the delivery state of every message, and once a message is acknowledged, it's gone.
 
-Kafka is a **distributed, partitioned commit log**. Each partition is an ordered, immutable sequence of records that is continually appended to.[^10] Records are **not deleted when consumed**: the cluster keeps all published records for a configurable retention period, whether they have been read or not.[^11] Each consumer just tracks its position, the *offset*, and can rewind to reprocess old data or skip to the latest.[^12] Load balancing and fan-out are both handled by **consumer groups**: consumers in the same group share partitions, and different groups each get every record.
+Kafka is a **distributed, partitioned commit log**. Each partition is an ordered, immutable sequence of records that is continually appended to.[^19] Records are **not deleted when consumed**: the cluster keeps them for a configurable retention period, whether they have been read or not.[^19] Each consumer just tracks its position, the *offset*, and can rewind to reprocess old data or skip to the latest.[^20] Load balancing and fan-out are both handled by **consumer groups**: consumers in the same group share partitions, and different groups each get every record.
 
 | | Traditional broker (RabbitMQ, Artemis) | Log (Kafka) |
 | --- | --- | --- |
 | After consumption | Message is removed | Record stays until retention expires |
 | Delivery state | Tracked per message by the broker | Each consumer tracks its own offset |
-| Replay | Not really (except RabbitMQ streams) | Built in |
+| Replay | Not really (except RabbitMQ streams and NATS JetStream) | Built in |
 | Ordering | Per queue, weakened by competing consumers and redelivery | Strict per partition |
 | Routing | Rich (exchanges, filters, selectors) | By topic and partition key only |
 | Sweet spot | Task queues, request/reply, complex routing, per-message retries | Event streaming, high-volume pipelines, event sourcing, analytics |
 
-The lines have blurred: RabbitMQ streams give you a replayable log, and Kafka has added share groups for queue-like consumption. But the default mental model still holds: **reach for a broker to distribute work, and a log to record and replay events.**
+The lines have blurred: RabbitMQ streams and NATS JetStream give you a replayable log, and Kafka's share groups, production-ready since Kafka 4.2, add queue-like consumption with per-record acknowledgement.[^21] NATS sits in the middle on purpose: core NATS is lighter than any traditional broker, while JetStream with `limits` retention is a log much like Kafka's, though without its partitioning model. But the default mental model still holds: **reach for a broker to distribute work, and a log to record and replay events.**
 
 ## Common pitfalls
 
+- **Assuming Core NATS stores anything.** A core NATS subscriber that's offline misses the message for good. If losing it matters, publish to a JetStream stream.
 - **Assuming exactly-once.** You will see duplicates: after a consumer crash, a network blip, or a redelivery. Make consumers idempotent.
 - **No dead-letter queue.** One poison message can stall a queue forever. Configure a DLQ and a delivery limit from day one, and alert on it.
 - **Unbounded queues.** A queue nobody consumes from will grow until the broker runs out of memory or disk. Set length limits or TTLs, and monitor queue depth.
@@ -330,6 +433,7 @@ The lines have blurred: RabbitMQ streams give you a replayable log, and Kafka ha
 - The core concepts are the same everywhere: **queues** for work, **pub/sub** for events, **acks** for reliability, **DLQs** for failures, and standard **protocols** for interoperability.
 - **RabbitMQ** stands out for its flexible exchange-based routing, quorum queues and streams, and broad language support.
 - **ActiveMQ Artemis** stands out for its multi-protocol core, fast journal, and first-class place in the Java/JMS ecosystem.
+- **NATS** stands out for its simplicity and speed: core NATS is fire-and-forget pub/sub with queue groups and request/reply, and JetStream adds persistence, work queues and replay when you need them.
 - **Kafka** is a log, not a queue: records are retained and replayed, which makes it the better fit for event streaming rather than task distribution.
 
 [^1]: [How to Use RabbitMQ Exchanges Effectively](https://oneuptime.com/blog/post/2026-01-26-rabbitmq-exchanges-guide/view), OneUptime blog, January 2026.
@@ -341,6 +445,15 @@ The lines have blurred: RabbitMQ streams give you a replayable log, and Kafka ha
 [^7]: [Core Architecture](https://activemq.apache.org/artemis/docs/latest/architecture.html), ActiveMQ Artemis documentation.
 [^8]: [Protocols and Interoperability](https://activemq.apache.org/artemis/docs/latest/protocols-interoperability.html), ActiveMQ Artemis documentation.
 [^9]: [Core Architecture](https://activemq.apache.org/artemis/docs/latest/architecture.html), ActiveMQ Artemis documentation: the persistent journal.
-[^10]: [Kafka introduction](https://kafka.apache.org/0100/api.html), Apache Kafka documentation: topics and partitions.
-[^11]: [Kafka introduction](https://kafka.apache.org/0102/js), Apache Kafka documentation: retention of published records.
-[^12]: [Kafka 0.8 introduction](https://kafka.apache.org/08/getting-started/introduction/), Apache Kafka documentation: consumer-controlled offsets.
+[^10]: [nats-io/nats-server](https://github.com/nats-io/nats-server), GitHub: the NATS server source code.
+[^11]: [CNCF and Synadia Align on Securing the Future of the NATS.io Project](https://www.cncf.io/blog/2025/05/01/cncf-and-synadia-align-on-securing-the-future-of-the-nats-io-project/), CNCF blog, May 2025.
+[^12]: [Core NATS](https://docs.nats.io/nats-concepts/core-nats), NATS documentation: at-most-once delivery and no storage.
+[^13]: [Subjects](https://docs.nats.io/nats-concepts/subjects), NATS documentation: subject hierarchy and wildcards.
+[^14]: [Queue Groups](https://docs.nats.io/concepts/queue-groups), NATS documentation.
+[^15]: [Request-Reply](https://docs.nats.io/concepts/request-reply), NATS documentation.
+[^16]: [JetStream](https://docs.nats.io/nats-concepts/jetstream), NATS documentation: streams, consumers, key-value and object store.
+[^17]: [Retention Policies](https://docs.nats.io/learn/jetstream/retention-policies), NATS documentation: limits, interest and work-queue retention.
+[^18]: [Advanced Publishing](https://docs.nats.io/learn/jetstream/advanced-publishing), NATS documentation: deduplication with `Nats-Msg-Id`.
+[^19]: [Introduction](https://kafka.apache.org/42/getting-started/introduction/), Apache Kafka 4.2 documentation: topics, partitions and retention.
+[^20]: [Kafka 0.8 introduction](https://kafka.apache.org/08/getting-started/introduction/), Apache Kafka documentation: consumer-controlled offsets.
+[^21]: [KIP-932: Queues for Kafka](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka), Apache Kafka wiki: share groups.
