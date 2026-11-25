@@ -1,6 +1,6 @@
 ---
 title: "Joining GCP VMs to an On-Premises Active Directory Domain"
-date: 2026-11-22
+date: 2026-11-25
 draft: true
 description: "How to domain-join Compute Engine VMs (Windows and Linux) to domain controllers that live in your own data center: hybrid connectivity, Cloud DNS forwarding and the 35.199.192.0/19 range, firewall ports, AD sites, automating the join at boot, and the problems you will hit along the way."
 summary: "Your VMs run in Google Cloud, your domain controllers are on-prem. Joining one to the other needs three things to work: a network path, DNS that can find the DCs, and a way to hand out join credentials safely. Here is each piece, with gcloud, Terraform and scripts."
@@ -21,7 +21,8 @@ This post covers:
 5. **AD sites and subnets**
 6. **Joining Windows VMs**, manually, automatically at first boot, and through a domain-join broker
 7. **Joining Linux VMs** with realmd and SSSD
-8. **Troubleshooting**
+8. **What about OpenLDAP?**
+9. **Troubleshooting**
 
 ## The big picture
 
@@ -450,6 +451,45 @@ The equivalent of offline join on Linux is pre-staging: create the account from 
 
 A note on OS Login: if you use OS Login for SSH, it's a separate mechanism from AD. Both can coexist, but decide which one controls SSH access, or you'll end up with two places to revoke someone's access.
 
+## What about OpenLDAP?
+
+If your on-prem directory is OpenLDAP rather than AD, there's no domain to join. A join depends on things only AD provides: SRV records that let clients find a DC, a computer account that gives each machine its own password and Kerberos keytab, a built-in KDC, Netlogon and Group Policy. OpenLDAP is just the directory.
+
+**Windows VMs** can't join at all. Windows only joins AD-compatible domains. Samba can act as an AD domain controller, but it uses its own directory, not OpenLDAP.[^17] The old NT4-style Samba domain with an OpenLDAP backend needs SMB1 and isn't worth building anything new on.
+
+**Linux VMs** become LDAP clients instead. `realm join` only supports AD and FreeIPA,[^18] so you write `sssd.conf` yourself:[^19]
+
+```ini
+[sssd]
+services = nss, pam
+domains = corp
+
+[domain/corp]
+id_provider = ldap
+auth_provider = ldap
+ldap_uri = ldaps://ldap1.corp.example.com, ldaps://ldap2.corp.example.com
+ldap_search_base = dc=corp,dc=example,dc=com
+ldap_default_bind_dn = cn=sssd-reader,ou=services,dc=corp,dc=example,dc=com
+ldap_default_authtok = <read from Secret Manager at boot>
+ldap_tls_cacert = /etc/pki/tls/certs/corp-ca.pem
+ldap_tls_reqcert = demand
+access_provider = simple
+simple_allow_groups = linux-admins
+cache_credentials = true
+```
+
+The startup script keeps the same shape as above: wait for the network, read the bind password from Secret Manager, write the config (mode `0600`), run `authselect select sssd with-mkhomedir`, and restart `sssd`.
+
+Most of this post gets simpler:
+
+- **Connectivity** doesn't change. You still need the VPN or Interconnect.
+- **DNS** matters less. There's no DC locator, so clients only need to resolve the LDAP hostnames. The `35.199.192.0/19` return route only matters if you keep a forwarding zone.
+- **Firewall**: `636` (or `389` with StartTLS) is enough, plus `88`/`464` if you add Kerberos. RPC, SMB and the dynamic port range aren't needed.
+- **Sites** have no equivalent. To stop depending on the link, run a read-only syncrepl replica in GCP instead of extra DCs.
+- **Secrets**: a read-only bind password and the CA certificate take the place of the join account. Nothing gets created per VM, so there are no stale computer objects to clean up and no 15-character hostname limit.
+
+The cost is security. VMs have no identity of their own: every client shares the same bind credential, and trust only goes one way. The client checks the server's certificate, but the server can't tell one machine from another. Logons send the password to the server over TLS instead of using Kerberos tickets. If you want real join semantics on Linux (host principals, keytabs, Kerberos SSO, central sudo and access rules), use FreeIPA. It's built on 389 Directory Server rather than OpenLDAP, and `ipa-client-install` is the closest Linux equivalent of an AD join.[^20]
+
 ## Troubleshooting
 
 Work from the bottom up. Each layer depends on the one below.
@@ -511,3 +551,7 @@ If you're running Kubernetes on GKE next to these VMs and want Windows container
 [^14]: [How to join RHEL to Active Directory using realmd](https://access.redhat.com/node/2980151), Red Hat Knowledgebase.
 [^15]: [Connecting RHEL systems directly to AD using SSSD](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/integrating_rhel_systems_directly_with_windows_active_directory/connecting-rhel-systems-directly-to-ad-using-sssd), Red Hat Enterprise Linux 10 documentation.
 [^16]: [Automatically joining a VM to Active Directory on Google Cloud](https://jpassing.com/2020/03/08/automatically-joining-a-vm-to-active-directory-on-google-cloud/), Johannes Passing.
+[^17]: [Setting up Samba as an Active Directory Domain Controller](https://wiki.samba.org/index.php/Setting_up_Samba_as_an_Active_Directory_Domain_Controller), Samba Wiki.
+[^18]: [realmd documentation](https://www.freedesktop.org/software/realmd/docs/), freedesktop.org.
+[^19]: [sssd-ldap(5): SSSD LDAP provider configuration](https://man.archlinux.org/man/sssd-ldap.5), SSSD manual page.
+[^20]: [FreeIPA](https://www.freeipa.org/), FreeIPA project.
