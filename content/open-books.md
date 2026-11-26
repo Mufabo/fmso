@@ -31,3 +31,17 @@ has its own practice exam.
 
 [Read on GitHub](https://github.com/Mufabo/kubestronaut) ·
 [Latest release (EPUB)](https://github.com/Mufabo/kubestronaut/releases/latest)
+
+## Introduction to Programming with Modern C++
+
+A beginner's textbook that teaches programming from scratch in C++23.
+It adapts the University of Helsinki's
+[Java Programming MOOC](https://java-programming.mooc.fi/): the same
+fourteen-part structure and the same kinds of exercises, rewritten for
+modern C++ (`std::println`, value semantics, RAII, ranges, lambdas,
+templates and concepts). The graphical chapters use raylib and end with
+an Asteroids game. It has 262 exercises, each with a starter folder
+that builds with CMake, and unit tests with Catch2 from chapter 6 on.
+
+[Read on GitHub](https://github.com/Mufabo/cpp-intro-to-programming) ·
+[Latest release (EPUB)](https://github.com/Mufabo/cpp-intro-to-programming/releases/latest)
