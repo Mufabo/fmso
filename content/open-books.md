@@ -2,7 +2,8 @@
 title: Open Books
 ---
 
-Non-fiction books I've written and published openly.
+Some of my AI interaction go way beyond the scope of a simple blog post.
+Those are bundled together into books.
 
 ## Introduction to Terraform on Google Cloud
 
