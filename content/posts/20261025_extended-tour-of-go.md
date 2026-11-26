@@ -16,6 +16,8 @@ Read it in order the first time. Later parts build on earlier ones: interfaces o
 
 ### Running Go code
 
+The examples assume **Go 1.23 or later**: some use features from 1.22 (per-iteration loop variables, `range` over integers) and 1.23 (iterators, as in `slices.Sorted(maps.Keys(m))`). Check with `go version`.
+
 You have two options.
 
 1. **The Go Playground** at [go.dev/play](https://go.dev/play/). It compiles and runs one program in a sandbox. Time is fixed (it starts at 2009-11-10 23:00:00 UTC), there is no network, and output is buffered. It is perfect for experiments.
@@ -366,7 +368,7 @@ There are no parentheses around the three parts, but the braces `{ }` are **alwa
 
 Note that `i++` is a *statement*, not an expression. You cannot write `x = i++`, and there is no `++i`.
 
-**Loop variables are per-iteration (Go 1.22+).** Since Go 1.22, each iteration gets a fresh copy of `i`. Before that, all iterations shared one variable, so closures or goroutines that captured `i` would all see its final value. If you read older code with `i := i` inside a loop, that was the workaround.
+**Loop variables are per-iteration (Go 1.22+).** When the loop *declares* its variables (`for i := ...` or `for i, v := range ...`) and the module uses Go 1.22 or later language semantics (the `go` line in `go.mod`), each iteration gets a fresh copy of `i`. Before that, all iterations shared one variable, so closures or goroutines that captured `i` could observe a later value, typically the final one, instead of the one from their own iteration. If you read older code with `i := i` inside a loop, that was the workaround. A loop that assigns to a variable declared outside it (`for i = 0; ...` or `for i = range ...`) still reuses that one variable, in every Go version.
 
 ### 2.2 For, continued
 
@@ -605,7 +607,7 @@ defer mu.Unlock()
 Two more facts that you will need later:
 
 - A deferred closure can read and modify **named results**, which is how functions annotate errors on the way out: `defer func() { if err != nil { err = fmt.Errorf("load: %w", err) } }()`.
-- `recover()`, called inside a deferred function, stops a panic. That is the only place `recover` has any effect.
+- `recover()` stops a panic, but only when a deferred function calls it **directly**, while the panic is unwinding the **same goroutine**. That is the only place it has any effect. If the deferred function calls a helper that in turn calls `recover`, the helper gets `nil` and the panic continues. A panic in another goroutine can’t be recovered from here at all; it has to be recovered by a deferred call in that goroutine, or it crashes the whole program.
 
 Avoid `defer` inside a long loop: the calls pile up until the *function* returns, not the loop iteration. Move the loop body into its own function instead.
 
@@ -997,6 +999,16 @@ Try it in the Tour: [Exercise: Slices](https://go.dev/tour/moretypes/18)
 
 A map associates keys with values; it is Go’s hash table. The type `map[K]V` maps keys of type `K` to values of type `V`. The key type must be **comparable** with `==` (numbers, strings, booleans, pointers, channels, interfaces, and structs or arrays made of these) — so slices, maps and functions cannot be keys.
 
+Interface key types are the trap. `map[any]int` compiles, because interface types are comparable, but the check that the *dynamic* type is comparable only happens at run time:
+
+```go
+m := map[any]int{}
+m["ok"] = 1      // fine: string is comparable
+m[[]int{1}] = 2  // panic: runtime error: hash of unhashable type []int
+```
+
+The same rule bites generic code that uses `comparable` (5.1).
+
 The zero value of a map is `nil`. A nil map behaves like an empty map for reading, but **writing to it panics**. Create maps with `make` or a literal.
 
 ```go
@@ -1013,7 +1025,7 @@ func main() {
 }
 ```
 
-Maps, like slices, are reference-like: passing a map to a function lets it modify the caller’s map. Iteration order with `range` over a map is **deliberately randomized**, so never depend on it; sort the keys (`slices.Sorted(maps.Keys(m))`) when you need stable output.
+Maps, like slices, are reference-like: passing a map to a function lets it modify the caller’s map. Iteration order with `range` over a map is **unspecified** and may differ from one loop to the next, so never depend on it; sort the keys (`slices.Sorted(maps.Keys(m))`) when you need stable output.
 
 ### 3.20 Map literals
 
@@ -1643,6 +1655,7 @@ Read `[T comparable]` as “for any type `T` that supports `==` and `!=`”. A f
 - **Type inference.** You usually don’t write the type argument: `Index(si, 15)` infers `T = int` from the arguments. You can be explicit with `Index[int](si, 15)`, which is necessary when nothing in the arguments determines `T`.
 - **The constraint is a contract in both directions.** Inside `Index` you may only use operations the constraint allows. Without `comparable`, `v == x` would not compile, because `T` might be a slice or a map.
 - **Constraints are interfaces.** `comparable` is a predeclared one; `any` allows every type but only operations that all types support (assignment, passing around).
+- **`comparable` does not rule out a runtime panic.** Since Go 1.20, interface types such as `any` satisfy `comparable`, so `Index[any]` compiles. Comparing two interface values that hold the same non-comparable dynamic type panics, just like the map key in 3.19: `Index([]any{[]int{1}}, any([]int{1}))` fails with `runtime error: comparing uncomparable type []int`. If the dynamic types differ, `==` just returns `false`.
 
 Constraints can also list **types**, using a union, which unlocks operators like `<` and `+`:
 
@@ -1822,7 +1835,10 @@ If other goroutines might also be receiving, drain without blocking using `selec
 ```go
 for {
 	select {
-	case v := <-ch:
+	case v, ok := <-ch:
+		if !ok {
+			return // closed and drained
+		}
 		fmt.Println(v)
 	default:
 		return // buffer empty right now
@@ -1830,11 +1846,13 @@ for {
 }
 ```
 
+Don’t leave out the `ok` check. Once a channel is closed and empty, a receive never blocks; it immediately returns the zero value. The receive case is then always ready, `default` never runs, and the loop prints `0` forever.
+
 If you need the values to stay in the channel, you have to send them back after printing, and only when nothing else is using the channel. Usually that means a channel is the wrong tool: collect the values into a slice as you receive them, and print the slice.
 
 ### 6.4 Range and close
 
-A sender can **close** a channel to say that no more values will come. A receiver can test for this with the comma-ok form:
+The sending side can **close** a channel to say that no more values will come. A receiver can test for this with the comma-ok form:
 
 ```go
 v, ok := <-ch // ok is false if ch is closed and drained
@@ -1863,7 +1881,7 @@ func main() {
 
 The rules:
 
-- **Only the sender should close** a channel, never the receiver. Sending on a closed channel panics.
+- **Whoever is responsible for the channel’s completion closes it, exactly once, after all sends are finished.** With one sender, that is the sender itself. With several senders, a coordinator waits for all of them and then closes, as in the `WaitGroup` example below. What matters is ownership, not which end of the channel you are on: a receiver may close only if it knows every sender has finished. Closing while a sender might still send is a bug, because sending on a closed channel panics (and so does closing an already closed channel). A receiver that stops reading early should signal cancellation instead, so the senders can finish (6.5). The goroutine responsible for completion can then close the data channel.
 - Receiving from a closed channel never blocks: it returns remaining buffered values, then zero values with `ok == false`.
 - Closing is **not required** like closing a file. Close a channel only when the receiver must be told there is nothing more — for example to end a `range` loop. Unreferenced channels are garbage collected either way.
 - Closing is a **broadcast**: every goroutine waiting on the channel wakes up. That makes `close(done)` a common way to tell many workers to stop (the `context` package builds on this idea).
@@ -1873,7 +1891,7 @@ The rules:
 - **If every goroutine is now blocked, the runtime aborts.** Remove `close(c)` from the example above. `main` prints ten numbers and then waits for an eleventh, but `fibonacci` has already returned, so nothing can ever send. The program crashes with `fatal error: all goroutines are asleep - deadlock!`.
 - **If anything else is still running, nothing is detected.** The deadlock check only fires when *all* goroutines are stuck. In a real program a server, a ticker or a network call is usually still alive. If the stuck loop is in `main`, the program then hangs silently. If it is in another goroutine, that goroutine is **leaked**: it stays blocked for the rest of the program, along with everything it references. This is one of the most common goroutine leaks in Go.
 
-To avoid this, the sender closes the channel when it is done. With several senders, none of them knows it is the last one, so count them with a `sync.WaitGroup` and close from a separate goroutine once they have all finished:
+To avoid this, close the channel once all sends are done. With one sender, the sender closes it when it is finished. With several senders, none of them knows it is the last one, so a coordinator counts them with a `sync.WaitGroup` and closes from a separate goroutine once they have all finished:
 
 ```go
 var wg sync.WaitGroup
@@ -1907,12 +1925,14 @@ type Folder struct {
 }
 
 // collect only sends. It never closes.
-func collect(f *Folder, ch chan<- string) {
+// dir is the path of f's parent, ending in "/" (or "" for the root).
+func collect(f *Folder, dir string, ch chan<- string) {
+	dir += f.Name + "/"
 	for _, name := range f.Files {
-		ch <- f.Name + "/" + name
+		ch <- dir + name
 	}
 	for _, sub := range f.Folders {
-		collect(sub, ch)
+		collect(sub, dir, ch)
 	}
 }
 
@@ -1921,13 +1941,13 @@ func AllFiles(root *Folder) <-chan string {
 	ch := make(chan string)
 	go func() {
 		defer close(ch)
-		collect(root, ch)
+		collect(root, "", ch)
 	}()
 	return ch
 }
 ```
 
-The caller just ranges over the result:
+Each call passes its accumulated path down, so a file `notes.txt` in `root/docs` comes out as `root/docs/notes.txt`, and two `docs` folders under different parents can’t produce the same name. The caller just ranges over the result:
 
 ```go
 for path := range AllFiles(root) {
@@ -1935,19 +1955,20 @@ for path := range AllFiles(root) {
 }
 ```
 
-Why not close inside the recursive function? Every recursive call would reach the `close`. The first call to finish, usually the deepest subfolder, closes the channel while its callers still have files to send. The next send then panics with `send on closed channel`. Even if no one sent again, the second `close` would panic with `close of closed channel`. A function only knows it is “the last one” when it is the outermost call, and the wrapper makes that explicit. Using `defer close(ch)` in the wrapper also means the channel gets closed if the recursion returns early or panics, so the caller’s `range` always ends.
+Why not close inside the recursive function? Every recursive call would reach the `close`. The first call to finish, usually the deepest subfolder, closes the channel while its callers still have files to send. The next send then panics with `send on closed channel`. Even if no one sent again, the second `close` would panic with `close of closed channel`. A function only knows it is “the last one” when it is the outermost call, and the wrapper makes that explicit. Using `defer close(ch)` in the wrapper also means the channel gets closed if the recursion returns early, so the caller’s `range` still ends. (A panic is different: an unrecovered panic in that goroutine crashes the whole program anyway.)
 
 If the recursion starts goroutines, for example to scan subfolders in parallel, the outermost call returns before the work is done, so nobody can close at the end of a call. Count the goroutines with a `sync.WaitGroup` instead, and close from a separate goroutine once the count reaches zero:
 
 ```go
-func collectParallel(f *Folder, ch chan<- string, wg *sync.WaitGroup) {
+func collectParallel(f *Folder, dir string, ch chan<- string, wg *sync.WaitGroup) {
 	defer wg.Done()
+	dir += f.Name + "/"
 	for _, name := range f.Files {
-		ch <- f.Name + "/" + name
+		ch <- dir + name
 	}
 	for _, sub := range f.Folders {
 		wg.Add(1) // before starting the goroutine
-		go collectParallel(sub, ch, wg)
+		go collectParallel(sub, dir, ch, wg)
 	}
 }
 
@@ -1955,7 +1976,7 @@ func AllFilesParallel(root *Folder) <-chan string {
 	ch := make(chan string)
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go collectParallel(root, ch, &wg)
+	go collectParallel(root, "", ch, &wg)
 	go func() {
 		wg.Wait() // every recursive goroutine has finished
 		close(ch)
@@ -1968,9 +1989,11 @@ Call `wg.Add(1)` before each `go`, not inside the new goroutine. Otherwise `Wait
 
 The rule is the same in both cases. Exactly one place closes the channel, and only after every possible sender is finished. The recursive code itself never closes.
 
+Both versions also expect the caller to **read the channel to the end**. The channel is unbuffered, so every send waits for a receiver. If a caller `break`s out of its `range` loop after finding the file it wanted, the next send blocks forever. The sending goroutine leaks, and in the parallel version so do the goroutine waiting in `wg.Wait()` and every recursive goroutine still trying to send. Either document “callers must drain the channel”, or, if stopping early should be allowed, pass a `context.Context` and make every send a `select` that also gives up on `ctx.Done()` (6.5). The caller then cancels the context when it stops reading.
+
 ### 6.5 Select
 
-`select` lets a goroutine wait on **several channel operations** at once. It blocks until one of its cases can run, then runs that case. If several are ready at the same moment, it picks one **at random**, which prevents any one channel from being starved.
+`select` lets a goroutine wait on **several channel operations** at once. It blocks until one of its cases can run, then runs that case. If several are ready at the same moment, it picks one by **uniform pseudo-random selection**. That keeps a `select` from always favoring the first case listed, but it guarantees nothing more: a ready case can lose several times in a row, and Go sets no limit on how long it may wait.
 
 ```go
 func fibonacci(c, quit chan int) {
@@ -2072,6 +2095,11 @@ type Tree struct {
 `tree.New(k)` builds a randomly shaped tree holding the values k, 2k, …, 10k.
 
 **Task.** (1) Implement `Walk(t *Tree, ch chan int)`, which sends all values of the tree to `ch` in sorted order. (2) Implement `Same(t1, t2 *Tree) bool` using `Walk`.
+
+Two things to get right, both from 6.4:
+
+- **Say how a walk ends.** The receiver has to know when a tree has no more values, so the producer closes the channel once the *complete* walk has returned. `Walk` is naturally recursive, so do it the same way as `AllFiles`: a recursive helper that only sends, and a wrapper that calls it and then closes the channel.
+- **Don’t return in the middle.** If `Same` returns at the first mismatch, one or both walkers are still blocked trying to send their next value, and those goroutines leak. For this exercise the simple fix is to remember the mismatch, keep receiving until both channels are closed, and only then return. The alternative is a cancellation path: a `done` channel or `context.Context` that the walkers check with `select` on every send.
 
 Try it in the Tour: [Exercise: Equivalent Binary Trees](https://go.dev/tour/concurrency/8)
 
