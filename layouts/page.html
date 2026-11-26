@@ -19,6 +19,18 @@
     {{- end }}
   </header>
 
+  {{- if eq .Section "posts" }}
+  {{- $toc := .TableOfContents }}
+  {{- if in $toc "<a " }}
+  <aside class="post-toc" aria-labelledby="toc-label">
+    <div class="post-toc-inner">
+      <p class="post-toc-label" id="toc-label">Contents</p>
+      {{ $toc }}
+    </div>
+  </aside>
+  {{- end }}
+  {{- end }}
+
   <div class="prose">
     {{ .Content }}
   </div>
