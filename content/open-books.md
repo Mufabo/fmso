@@ -45,3 +45,17 @@ that builds with CMake, and unit tests with Catch2 from chapter 6 on.
 
 [Read on GitHub](https://github.com/Mufabo/cpp-intro-to-programming) ·
 [Latest release (EPUB)](https://github.com/Mufabo/cpp-intro-to-programming/releases/latest)
+
+## Web Server Programming with Go
+
+An introduction to web programming with Go 1.27 and the standard
+library's `net/http`. It adapts the University of Helsinki's
+Web-palvelinohjelmointi Java course (2020) from Spring to Go: HTTP and
+your first server, `html/template` and forms, SQLite with
+`database/sql`, testing and deployment, sessions and bcrypt, validation
+and JSON REST APIs, and finally JavaScript and `fetch`, web security,
+caching, and goroutines with server-sent events. Its seven chapters
+have 57 exercises, each a starter folder with tests that `go test` runs.
+
+[Read on GitHub](https://github.com/Mufabo/go-web-programming) ·
+[Latest build (EPUB)](https://github.com/Mufabo/go-web-programming/releases/tag/latest)
